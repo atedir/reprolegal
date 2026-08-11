@@ -1,0 +1,365 @@
+[
+  {
+    "slug": "ukraine",
+    "n": "Ukraine",
+    "r": "Eastern Europe",
+    "status": "ok",
+    "allows": [
+      "married"
+    ],
+    "cost": "$48k \u2013 $58k",
+    "time": "14 \u2013 18 months",
+    "d": "A statutory framework in which the intended parents are recorded on the birth certificate from birth, with no adoption step in country. Marriage and a documented medical indication are required.",
+    "facts": [
+      [
+        "Legal basis",
+        "Family Code, statutory [verify]"
+      ],
+      [
+        "Marital status",
+        "Married couples only [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents from birth [verify]"
+      ],
+      [
+        "Time in country",
+        "2\u20134 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Embassy travel document [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "georgia",
+    "n": "Georgia",
+    "r": "Caucasus",
+    "status": "ok",
+    "allows": [
+      "married",
+      "unmarried"
+    ],
+    "cost": "$45k \u2013 $55k",
+    "time": "13 \u2013 17 months",
+    "d": "Long-established programmes with a predictable document chain and clinics used to foreign intended parents. Requirements for non-residents apply and change periodically.",
+    "facts": [
+      [
+        "Legal basis",
+        "Statutory, health law [verify]"
+      ],
+      [
+        "Marital status",
+        "Couples [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents from birth [verify]"
+      ],
+      [
+        "Time in country",
+        "2\u20134 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Embassy travel document [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "armenia",
+    "n": "Armenia",
+    "r": "Caucasus",
+    "status": "ok",
+    "allows": [
+      "married",
+      "unmarried",
+      "singlem"
+    ],
+    "cost": "$45k \u2013 $55k",
+    "time": "13 \u2013 18 months",
+    "d": "A regulated route with a shorter document chain than most of the region, and eligibility that extends further than its neighbours.",
+    "facts": [
+      [
+        "Legal basis",
+        "Statutory [verify]"
+      ],
+      [
+        "Marital status",
+        "Couples and single women [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents [verify]"
+      ],
+      [
+        "Time in country",
+        "2\u20135 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Embassy travel document [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "czechia",
+    "n": "Czechia",
+    "r": "Central Europe",
+    "status": "mid",
+    "allows": [
+      "married"
+    ],
+    "cost": "$55k \u2013 $70k",
+    "time": "15 \u2013 20 months",
+    "d": "No dedicated surrogacy statute. The route runs through established medical practice and family-law procedure, which means the legal sequence matters more here than anywhere else on this list.",
+    "facts": [
+      [
+        "Legal basis",
+        "No specific statute [verify]"
+      ],
+      [
+        "Marital status",
+        "Married couples [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Court/adoption step likely [verify]"
+      ],
+      [
+        "Time in country",
+        "Varies [verify]"
+      ],
+      [
+        "Exit route",
+        "Case by case [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "albania",
+    "n": "Albania",
+    "r": "Southern Europe",
+    "status": "mid",
+    "allows": [
+      "married",
+      "unmarried",
+      "samesex",
+      "singlef",
+      "singlem"
+    ],
+    "cost": "$50k \u2013 $65k",
+    "time": "14 \u2013 19 months",
+    "d": "Broad eligibility in practice with the legal tail handled after birth. Attractive for applicants excluded elsewhere, provided recognition at home is planned in advance.",
+    "facts": [
+      [
+        "Legal basis",
+        "Practice, no dedicated statute [verify]"
+      ],
+      [
+        "Marital status",
+        "All applicant types [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents [verify]"
+      ],
+      [
+        "Time in country",
+        "3\u20136 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Embassy, varies by nationality [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "colombia",
+    "n": "Colombia",
+    "r": "Latin America",
+    "status": "mid",
+    "allows": [
+      "married",
+      "unmarried",
+      "samesex",
+      "singlef",
+      "singlem"
+    ],
+    "cost": "$60k \u2013 $75k",
+    "time": "16 \u2013 22 months",
+    "d": "Practice established through court decisions rather than a dedicated statute. The broadest eligibility of the group, with the longest legal sequence to match.",
+    "facts": [
+      [
+        "Legal basis",
+        "Case law [verify]"
+      ],
+      [
+        "Marital status",
+        "All applicant types [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents via court [verify]"
+      ],
+      [
+        "Time in country",
+        "4\u20138 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Consular process [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "mexico",
+    "n": "Mexico",
+    "r": "Latin America",
+    "status": "mid",
+    "allows": [
+      "married",
+      "unmarried",
+      "samesex",
+      "singlef",
+      "singlem"
+    ],
+    "cost": "$60k \u2013 $78k",
+    "time": "16 \u2013 22 months",
+    "d": "State-level differences are decisive. Choosing the state is part of the plan, not a detail, and the choice drives both the timeline and the exit process.",
+    "facts": [
+      [
+        "Legal basis",
+        "State level, varies [verify]"
+      ],
+      [
+        "Marital status",
+        "All applicant types [verify]"
+      ],
+      [
+        "Birth certificate",
+        "State dependent [verify]"
+      ],
+      [
+        "Time in country",
+        "4\u201310 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Consular process [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "united-states",
+    "n": "United States",
+    "r": "North America",
+    "status": "ok",
+    "allows": [
+      "married",
+      "unmarried",
+      "samesex",
+      "singlef",
+      "singlem"
+    ],
+    "cost": "$140k \u2013 $190k",
+    "time": "18 \u2013 24 months",
+    "d": "State-level regulation with pre-birth orders available in several states. The highest cost band on this list and the strongest recognition afterwards, including automatic citizenship for the child.",
+    "facts": [
+      [
+        "Legal basis",
+        "State statutes and case law [verify]"
+      ],
+      [
+        "Marital status",
+        "All applicant types [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Pre-birth order in many states [verify]"
+      ],
+      [
+        "Time in country",
+        "3\u20136 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "US passport for the child [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "canada",
+    "n": "Canada",
+    "r": "North America",
+    "status": "ok",
+    "allows": [
+      "married",
+      "unmarried",
+      "samesex",
+      "singlef",
+      "singlem"
+    ],
+    "cost": "$95k \u2013 $130k",
+    "time": "18 \u2013 26 months",
+    "d": "An altruistic model: the surrogate is reimbursed for expenses rather than compensated. That keeps the framework clean and lengthens matching considerably.",
+    "facts": [
+      [
+        "Legal basis",
+        "Federal AHRA plus provincial law [verify]"
+      ],
+      [
+        "Marital status",
+        "All applicant types [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Declaration of parentage [verify]"
+      ],
+      [
+        "Time in country",
+        "4\u20138 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Canadian passport for the child [verify]"
+      ]
+    ]
+  },
+  {
+    "slug": "abu-dhabi",
+    "n": "Abu Dhabi",
+    "r": "Middle East (UAE)",
+    "status": "mid",
+    "allows": [
+      "married"
+    ],
+    "cost": "$70k \u2013 $95k",
+    "time": "16 \u2013 22 months",
+    "d": "A newer regulated route with strict marital and documentation requirements, and the shortest travel time for intended parents based in the Gulf.",
+    "facts": [
+      [
+        "Legal basis",
+        "Emirate-level regulation [verify]"
+      ],
+      [
+        "Marital status",
+        "Married couples only [verify]"
+      ],
+      [
+        "Birth certificate",
+        "Intended parents [verify]"
+      ],
+      [
+        "Time in country",
+        "3\u20136 weeks after birth [verify]"
+      ],
+      [
+        "Exit route",
+        "Embassy travel document [verify]"
+      ]
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "name": "ReproLegal",
+  "short_name": "ReproLegal",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "theme_color": "#272320",
+  "background_color": "#F7F4EF",
+  "display": "standalone",
+  "start_url": "/"
+}

@@ -1,0 +1,13 @@
+_worker.js
+wrangler.toml
+.assetsignore
+scripts/
+content/
+.github/
+README.md
+node_modules/
+package*.json
+.gitignore
+package.json
+package-lock.json
+.wrangler/

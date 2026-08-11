@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ReproLegal — a premium surrogacy and donation agency</title>
+<meta name="description" content="Surrogacy and IVF programmes coordinated end to end: itemised costs, milestone payments, ten destinations, and one coordinator from your first call to birth." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="stylesheet" href="/assets/site.css" />
+</head>
+<body>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <a href="/" class="brand"><svg class="mk" width="34" height="22" viewBox="0 0 80 52" aria-hidden="true"><path d="M8 44 A32 32 0 0 1 72 44" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M22 44 A18 18 0 0 1 58 44" fill="none" stroke="#B5713C" stroke-width="5.5" stroke-linecap="round"/><circle cx="40" cy="44" r="3.6" fill="currentColor"/></svg><span class="tx">ReproLegal<small>Surrogacy &amp; Donation</small></span></a>
+    <div class="navr">
+      <a href="/countries" class="hide-s">Countries</a>
+      <a href="/costs" class="hide-s">Costs</a>
+      <a href="#contact">Start your journey</a>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer">
+  <button class="close" id="close">Close</button>
+  <nav>
+    <a href="/programmes">Programmes</a>
+    <a href="/costs">Costs</a>
+    <a href="/how-it-works">How it works</a>
+    <a href="/countries">Countries</a>
+    <a href="/stories">Stories</a>
+    <a href="/faq">FAQ</a>
+    <a href="/blog">Journal</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<div class="hero">
+  <img class="bg" src="/img/hero.webp" srcset="/img/hero-1200.webp 1200w, /img/hero.webp 1600w" sizes="100vw" alt="A newborn's foot resting in an adult's open palm" width="1600" height="1073" fetchpriority="high" />
+  <div class="veil"></div>
+  <div class="in">
+   <div class="copy">
+    <div class="sub reveal" style="--d:.15s">A premium surrogacy &amp; donation agency</div>
+    <h1 id="heroH1">Ten destinations. Itemised costs. One coordinator.</h1>
+    <p class="lead reveal" style="--d:.7s">From the first call to the day you fly home — with the money, the law and the timeline explained before you commit to anything.</p>
+    <div class="pills reveal" style="--d:.9s">
+      <a href="#contact" class="btn btn-ink">Book a free 30-minute call</a>
+      <a href="/costs" class="btn btn-line">See the costs</a>
+    </div>
+   </div>
+  </div>
+  <div class="scrollcue"><span>Scroll</span><i></i></div>
+</div>
+
+<!-- DEV NOTE (hero): Hero · your image, in place Inlined as base64 at 1600px so this single file previews on its own. In the repo: /img/hero.webp at 2000px + a 1000px variant behind srcset, and the base64 blob deleted — otherwise the HTML can never be cached and first paint suffers. -->
+
+<!-- ===================== STATEMENT ===================== -->
+<section class="statement">
+  <div class="wrap narrow">
+    <p class="reveal">Every family we have helped began the same way — with a call where somebody finally gave them <em>a straight answer</em> about the money, the law and the time it would take.</p>
+  </div>
+</section>
+
+<!-- ===================== STATS ===================== -->
+<div class="wrap">
+  <div class="stats">
+    <div class="c reveal"><div class="n"><span class="count" data-to="10" data-suffix="">0</span></div><div class="l">Years coordinating</div></div>
+    <div class="c reveal" style="--d:.1s"><div class="n"><span class="count" data-to="500" data-suffix="+">0</span></div><div class="l">Families supported</div></div>
+    <div class="c reveal" style="--d:.2s"><div class="n"><span class="count" data-to="30" data-suffix="+">0</span></div><div class="l">Countries of origin</div></div>
+    <div class="c reveal" style="--d:.3s"><div class="n"><span class="count" data-to="10" data-suffix="">0</span></div><div class="l">Destinations</div></div>
+  </div>
+</div>
+
+<!-- ===================== COSTS ===================== -->
+<section id="costs">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">Transparent pricing</div>
+      <h2>Where every dollar goes</h2>
+      <p>Choose a programme and hover any part of the ring. Each figure is fixed in your contract before you sign, and the variable items are named separately rather than folded into one number.</p>
+    </div>
+    <div class="explorer reveal">
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-key="fet">Surrogacy + FET</button>
+        <button class="tab" data-key="egg">Surrogacy + Egg donation</button>
+        <button class="tab" data-key="ivf">IVF cycle</button>
+        <button class="tab" data-key="ivfegg">IVF + Egg donation</button>
+      </div>
+      <div class="exp">
+        <div class="arcwrap" id="chart">
+          <svg viewBox="0 0 520 292" aria-hidden="true"></svg>
+          <div class="arcmid">
+            <div class="lab">Total programme</div>
+            <div class="tot" id="total">$0</div>
+            <div class="sub" id="subline">typical range</div>
+          </div>
+        </div>
+        <div class="arclegend" id="legend"></div>
+      </div>
+      <div class="exp-foot">Averages for planning, not a quote. Medical complications, additional transfer cycles and legal steps in your home country are billed separately and always disclosed in advance.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MILESTONES ===================== -->
+<section style="background:var(--cream)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">How you pay</div>
+      <h2>You pay as the programme moves</h2>
+      <p>We never ask for the programme upfront and we do not hold your funds. Each tranche falls due when the stage before it is finished and documented.</p>
+    </div>
+    <div class="ms-wrap">
+      <div class="ms reveal"><div class="dot"></div><div class="pct">15%</div><div class="when">On signing</div><div class="what">Coordination opens, document checklist and legal review begin.</div></div>
+      <div class="ms reveal" style="--d:.08s"><div class="dot"></div><div class="pct">25%</div><div class="when">Surrogate matched</div><div class="what">Profile accepted by you, medical and psychological screening complete.</div></div>
+      <div class="ms reveal" style="--d:.16s"><div class="dot"></div><div class="pct">25%</div><div class="when">Transfer done</div><div class="what">Embryo transfer performed and confirmed by the clinic.</div></div>
+      <div class="ms reveal" style="--d:.24s"><div class="dot"></div><div class="pct">20%</div><div class="when">Heartbeat</div><div class="what">Clinical pregnancy established at the scan.</div></div>
+      <div class="ms reveal" style="--d:.32s"><div class="dot"></div><div class="pct">15%</div><div class="when">Birth &amp; documents</div><div class="what">Birth certificate issued and the exit package handed to you.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROGRAMMES ===================== -->
+<section id="programmes">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">Programmes</div>
+      <h2>Start from where you actually are</h2>
+      <p>The right programme depends on your embryos, your medical history and your passport — not on which package sells best.</p>
+    </div>
+    <div class="pgrid">
+      <div class="pcard reveal">
+        <div class="imgwrap"><img class="lift" src="/img/prog-fet.webp" alt="A newborn's fingers curled around an adult's fingertip" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">You already have embryos</div>
+        <h3 style="margin-top:14px">Frozen embryo transfer</h3>
+        <p>Your existing embryos are shipped, matched to a screened surrogate and transferred — no retrieval cycle needed.</p>
+        <span class="go">Explore</span>
+      </div>
+      <div class="pcard reveal" style="--d:.1s">
+        <div class="imgwrap"><img class="lift" src="/img/prog-own-eggs.webp" alt="Close-up of a newborn's ear and fine hair against knitted fabric" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">The intended mother's eggs</div>
+        <h3 style="margin-top:14px">Own eggs and surrogacy</h3>
+        <p>A full IVF cycle with your own eggs, genetic testing where indicated, then transfer to a matched surrogate.</p>
+        <span class="go">Explore</span>
+      </div>
+      <div class="pcard reveal" style="--d:.2s">
+        <div class="imgwrap"><img class="lift" src="/img/prog-donor.webp" alt="A newborn's bare feet resting in a cream knitted blanket" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">Donor eggs needed</div>
+        <h3 style="margin-top:14px">Egg donation and surrogacy</h3>
+        <p>No catalogue. A donor is sourced individually against your criteria and fully screened before you decide anything.</p>
+        <span class="go">Explore</span>
+      </div>
+      <div class="pcard reveal">
+        <div class="imgwrap"><img class="lift" src="/img/prog-single.webp" alt="A mother with her two daughters at home" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">Single intended parents</div>
+        <h3 style="margin-top:14px">Single fathers and mothers</h3>
+        <p>Jurisdiction decides most of this. We start with what your passport allows, not with a package.</p>
+        <span class="go">Explore</span>
+      </div>
+      <div class="pcard reveal" style="--d:.1s">
+        <div class="imgwrap"><img class="lift" src="/img/prog-same-sex.webp" alt="Two fathers reading a picture book with their daughter" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">Same-sex couples</div>
+        <h3 style="margin-top:14px">Same-sex couples</h3>
+        <p>Programmes where both partners are recognised, and a documented route to registering your child at home.</p>
+        <span class="go">Explore</span>
+      </div>
+      <div class="pcard reveal" style="--d:.2s">
+        <div class="imgwrap"><img class="lift" src="/img/prog-medical.webp" alt="A newborn's foot resting on soft white linen in window light" width="760" height="950" loading="lazy" decoding="async" /></div>
+        <div class="kicker">Medical complexity</div>
+        <h3 style="margin-top:14px">HIV, hepatitis, failed cycles</h3>
+        <p>Protocol-specific clinics, sperm washing where indicated, and an honest review of prior attempts.</p>
+        <span class="go">Explore</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section id="how" style="background:var(--cream)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">The journey</div>
+      <h2>Five stages, each defined before it starts</h2>
+      <p>Durations are typical ranges. Anything that depends on biology, we say so rather than promise a date.</p>
+    </div>
+    <div>
+      <div class="step reveal"><div class="ix">01</div><div><h3>Eligibility and documents</h3><p>We check what your country of residence requires, then prepare and apostille your documents against a written checklist before anything is submitted.</p></div><div class="when">1–4 weeks</div></div>
+      <div class="step reveal"><div class="ix">02</div><div><h3>IVF and embryos</h3><p>A full cycle at a licensed clinic, or transfer of your existing frozen embryos. Genetic testing where medically indicated.</p></div><div class="when">4–8 weeks</div></div>
+      <div class="step reveal"><div class="ix">03</div><div><h3>Surrogate matching</h3><p>You receive a full profile — medical history, psychological evaluation, home visit notes — and meet her on a call before any medical step. You can decline a match.</p></div><div class="when">2–6 weeks</div></div>
+      <div class="step reveal"><div class="ix">04</div><div><h3>Pregnancy and monitoring</h3><p>Scheduled check-ups, regular updates, direct contact with your surrogate if both sides want it, and a coordinator answering within 24 hours.</p></div><div class="when">~9 months</div></div>
+      <div class="step reveal"><div class="ix">05</div><div><h3>Birth, registration and exit</h3><p>Birth certificate, translations and the full document package for your embassy. Exit steps differ by nationality, and we walk each one with you.</p></div><div class="when">2–8 weeks after birth</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COUNTRIES ===================== -->
+<section id="countries">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">Where we run programmes</div>
+      <h2>Ten destinations</h2>
+      <p>The destination decides who is named on the birth certificate and how you get home. Pick your situation and your passport, and see only the routes that survive both tests.</p>
+    </div>
+    <div class="cgrid reveal">
+      <div class="cc"><span class="cn">Ukraine</span><span class="cr">Eastern Europe</span></div>
+      <div class="cc"><span class="cn">Georgia</span><span class="cr">Caucasus</span></div>
+      <div class="cc"><span class="cn">Armenia</span><span class="cr">Caucasus</span></div>
+      <div class="cc"><span class="cn">Czechia</span><span class="cr">Central Europe</span></div>
+      <div class="cc"><span class="cn">Albania</span><span class="cr">Southern Europe</span></div>
+      <div class="cc"><span class="cn">Colombia</span><span class="cr">Latin America</span></div>
+      <div class="cc"><span class="cn">Mexico</span><span class="cr">Latin America</span></div>
+      <div class="cc"><span class="cn">United States</span><span class="cr">North America</span></div>
+      <div class="cc"><span class="cn">Canada</span><span class="cr">North America</span></div>
+      <div class="cc"><span class="cn">Abu Dhabi</span><span class="cr">Middle East</span></div>
+    </div>
+    <div class="reveal" style="text-align:center;margin-top:48px">
+      <a href="/countries" class="btn btn-ink">Open the country matcher</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMMITMENTS ===================== -->
+<section style="background:var(--cream)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">What we commit to</div>
+      <h2>What you can hold us to</h2>
+    </div>
+    <div class="gg">
+      <div class="reveal"><div class="rule" style="margin:0"></div><h3>Fixed core pricing</h3><p>Coordination, surrogate compensation and medical management are fixed in the contract. Variable items are named, capped where possible, and never invoiced as a surprise.</p></div>
+      <div class="reveal" style="--d:.08s"><div class="rule" style="margin:0"></div><h3>Payment by milestone</h3><p>You transfer each tranche when the stage before it is complete and documented.</p></div>
+      <div class="reveal" style="--d:.16s"><div class="rule" style="margin:0"></div><h3>One coordinator</h3><p>The same person from your first call through birth and exit. You never re-explain your history to someone new.</p></div>
+      <div class="reveal"><div class="rule" style="margin:0"></div><h3>Independent counsel</h3><p>You get your own lawyer, not ours. Contracts are reviewed by someone whose duty is to you.</p></div>
+      <div class="reveal" style="--d:.08s"><div class="rule" style="margin:0"></div><h3>Screening you can verify</h3><p>Medical results, psychological evaluation and home visit notes are shared with you — not summarised for you.</p></div>
+      <div class="reveal" style="--d:.16s"><div class="rule" style="margin:0"></div><h3>No success guarantees</h3><p>No ethical agency can promise a pregnancy. We commit to structure, oversight and staying with you if a cycle fails.</p></div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ===================== STORIES ===================== -->
+<section class="team" id="team">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">Who you will actually talk to</div>
+      <h2>Names, not a ticket queue</h2>
+      <p>A coordinator, a matching specialist, independent counsel, a medical liaison and a documents team — the same names from your first call through birth and exit.</p>
+    </div>
+    <div class="tcarousel reveal">
+      <button class="tarrow prev" id="tprev" type="button" aria-label="Previous">&#8592;</button>
+      <div class="ttrack" id="ttrack" tabindex="0">
+        <article class="tperson">
+          <div class="tphoto"><img src="/img/team-alyona.webp" alt="Alyona Kalchuk" width="700" height="933" loading="lazy" /></div>
+          <div class="tname">Alyona Kalchuk</div>
+          <div class="trole">Owner · International surrogacy</div>
+          <p class="tbio">Builds the route before the budget: which destination your passport allows, who is named on the birth certificate, and what has to happen at home afterwards.</p>
+          <div class="tmeta">[X] years · EN / UA / [language]</div>
+        </article>
+        <article class="tperson">
+          <div class="tphoto"><img src="/img/team-sasha.webp" alt="Sasha" width="700" height="933" loading="lazy" /></div>
+          <div class="tname">Sasha</div>
+          <div class="trole">Programme coordinator</div>
+          <p class="tbio">Runs the day to day — clinic scheduling, apostilles, embassy paperwork, and the answer to whatever you send at 2am.</p>
+          <div class="tmeta">Answers within 24 hours · EN / UA</div>
+        </article>
+        <article class="tperson">
+          <div class="tphoto"><img src="/img/team-anastasia.webp" alt="Anastasia" width="700" height="933" loading="lazy" /></div>
+          <div class="tname">Anastasia</div>
+          <div class="trole">Surrogate &amp; donor matching</div>
+          <p class="tbio">Screens and matches individually — medical history, psychological evaluation, home visit. No catalogue, no shared cycles.</p>
+          <div class="tmeta">[N] matches completed · EN / UA</div>
+        </article>
+        <!-- To add a person: copy an <article class="tperson"> block above.
+             With four or more cards the carousel (arrows, dots, swipe) switches itself on. -->
+      </div>
+      <button class="tarrow next" id="tnext" type="button" aria-label="Next">&#8594;</button>
+      <div class="tdots" id="tdots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE COPY — these four reviews are written examples of the right length and
+     specificity. Replace every one with a real, consented review before launch. -->
+<section id="stories">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="rule"></div>
+      <div class="kicker" style="margin-top:20px">Families</div>
+      <h2>From parents who have finished</h2>
+      <p>Four things they mention most: the first call, the matching, what happened when something went wrong, and the day the documents were finally in hand.</p>
+    </div>
+    <div class="tgrid">
+      <div class="tcard reveal">
+        <blockquote>Twice we were told our documents were fine, and twice they came back. ReproLegal rebuilt the whole file before submitting anything, and it went through first time. The call with our surrogate was the moment it stopped feeling like paperwork.</blockquote>
+        <div class="who">M. &amp; T. · Germany · 2025</div>
+      </div>
+      <div class="tcard reveal" style="--d:.1s">
+        <blockquote>What decided it was the first call. We asked what happens if a transfer fails and instead of reassurance we were read the clause number. Everything since has been that specific.</blockquote>
+        <div class="who">J. &amp; S. · United Kingdom · 2025</div>
+      </div>
+      <div class="tcard reveal" style="--d:.2s">
+        <blockquote>Our second cycle did not work. Nobody disappeared and nobody softened it — we had a call the same evening explaining what had changed and what it would cost. Our daughter was born eleven months later.</blockquote>
+        <div class="who">A. &amp; L. · Italy · 2024</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" style="background:var(--cream)">
+  <div class="wrap narrow">
+    <div class="sec-head reveal"><div class="rule"></div><div class="kicker" style="margin-top:20px">Questions</div><h2>Before you start</h2></div>
+    <div class="reveal">
+      <details open><summary>How much does a programme cost in total?</summary><div class="a">It depends on the destination, on whether you already have embryos, and on whether a donor is needed. The explorer above shows the typical split; your itemised quote follows a short call about your medical and legal starting point.</div></details>
+      <details><summary>When do I pay, and how much at a time?</summary><div class="a">In five tranches tied to milestones: signing, surrogate matched, transfer completed, heartbeat confirmed, birth and documents. Nothing is paid for a stage that has not happened.</div></details>
+      <details><summary>How long does the whole process take?</summary><div class="a">Typically 14 to 20 months from first documents to flying home, though matching and IVF response are biological variables.</div></details>
+      <details><summary>Is success guaranteed?</summary><div class="a">No. Pregnancy and birth depend on medical factors nobody can guarantee. What is contractually defined is what happens — clinically and financially — if a cycle does not work.</div></details>
+      <details><summary>Will my country recognise my child?</summary><div class="a">The answer is specific to your nationality. Some countries recognise the foreign birth certificate; others require a court order or an adoption step at home. We map your route with local counsel before you commit.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== JOURNEY BAND ===================== -->
+<div class="journey">
+  <div class="bg" id="jbg">
+    <svg class="cellart" viewBox="0 0 1400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="glow" cx="46%" cy="50%" r="52%">
+          <stop offset="0%" stop-color="#FFFAF2" stop-opacity="1"/>
+          <stop offset="52%" stop-color="#F7E7D6" stop-opacity=".96"/>
+          <stop offset="82%" stop-color="#E3BE9B" stop-opacity=".45"/>
+          <stop offset="100%" stop-color="#B87848" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="drop" cx="38%" cy="32%" r="72%">
+          <stop offset="0%" stop-color="#FFFDF8" stop-opacity=".85"/>
+          <stop offset="55%" stop-color="#F1DCC4" stop-opacity=".62"/>
+          <stop offset="100%" stop-color="#DDB68C" stop-opacity=".5"/>
+        </radialGradient>
+        <radialGradient id="yolk" cx="40%" cy="34%" r="70%">
+          <stop offset="0%" stop-color="#FBEBCF" stop-opacity=".98"/>
+          <stop offset="70%" stop-color="#EFD5AE" stop-opacity=".95"/>
+          <stop offset="100%" stop-color="#E0BE8E" stop-opacity=".9"/>
+        </radialGradient>
+        <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".85"/>
+          <stop offset="45%" stop-color="#FFFFFF" stop-opacity=".15"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity=".7"/>
+        </linearGradient>
+        <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="softer"><feGaussianBlur stdDeviation="22"/></filter>
+        <clipPath id="inside"><circle cx="760" cy="250" r="168"/></clipPath>
+      </defs>
+
+      <g class="halo" filter="url(#softer)"><ellipse cx="620" cy="250" rx="470" ry="330" fill="url(#glow)"/></g>
+
+      <g class="droplet">
+        <circle cx="760" cy="250" r="168" fill="url(#drop)"/>
+        <circle cx="760" cy="250" r="168" fill="none" stroke="url(#rim)" stroke-width="3.5"/>
+        <circle cx="760" cy="250" r="163" fill="none" stroke="#FFFFFF" stroke-opacity=".25" stroke-width="1.2"/>
+        <g clip-path="url(#inside)">
+          <circle class="yolk" cx="806" cy="296" r="86" fill="url(#yolk)"/>
+          <circle class="yolk" cx="806" cy="296" r="86" fill="none" stroke="#FFFFFF" stroke-opacity=".3" stroke-width="1.5"/>
+          <g class="bubbles">
+        <circle cx="754" cy="262" r="5.4" style="--dx:-12.0px;--dy:-12.5px;--dur:21.3s;--del:-0.8s"/>
+        <circle cx="756" cy="250" r="4.2" style="--dx:-12.0px;--dy:-18.7px;--dur:22.5s;--del:-11.6s"/>
+        <circle cx="773" cy="262" r="5.3" style="--dx:12.5px;--dy:-11.9px;--dur:21.9s;--del:-13.7s"/>
+        <circle cx="811" cy="265" r="3.3" style="--dx:-10.0px;--dy:-18.4px;--dur:20.2s;--del:-11.4s"/>
+        <circle cx="776" cy="285" r="5.4" style="--dx:-3.6px;--dy:-12.3px;--dur:15.3s;--del:-0.8s"/>
+        <circle cx="772" cy="293" r="4.1" style="--dx:-5.2px;--dy:-11.8px;--dur:23.1s;--del:-4.2s"/>
+        <circle cx="772" cy="206" r="3.0" style="--dx:2.1px;--dy:-12.6px;--dur:31.5s;--del:-10.2s"/>
+        <circle cx="746" cy="308" r="2.3" style="--dx:-2.3px;--dy:-9.4px;--dur:17.0s;--del:-6.8s"/>
+        <circle cx="802" cy="261" r="6.1" style="--dx:2.0px;--dy:-7.7px;--dur:20.3s;--del:-9.7s"/>
+        <circle cx="728" cy="228" r="4.3" style="--dx:9.5px;--dy:-6.8px;--dur:23.5s;--del:-9.3s"/>
+        <circle cx="802" cy="267" r="5.4" style="--dx:13.8px;--dy:-8.5px;--dur:19.7s;--del:-5.4s"/>
+        <circle cx="759" cy="248" r="4.3" style="--dx:-9.3px;--dy:-18.4px;--dur:15.2s;--del:-10.8s"/>
+        <circle cx="773" cy="264" r="3.9" style="--dx:10.4px;--dy:-18.9px;--dur:23.0s;--del:-7.7s"/>
+        <circle cx="798" cy="215" r="6.7" style="--dx:-6.2px;--dy:-14.2px;--dur:21.2s;--del:-12.4s"/>
+        <circle cx="772" cy="247" r="2.6" style="--dx:-7.5px;--dy:-16.7px;--dur:23.7s;--del:-8.2s"/>
+        <circle cx="760" cy="251" r="4.1" style="--dx:-3.7px;--dy:-12.1px;--dur:33.1s;--del:-9.7s"/>
+        <circle cx="719" cy="246" r="5.6" style="--dx:-12.5px;--dy:-7.4px;--dur:29.6s;--del:-12.2s"/>
+        <circle cx="768" cy="223" r="4.0" style="--dx:-11.1px;--dy:-11.1px;--dur:15.2s;--del:-0.9s"/>
+        <circle cx="764" cy="263" r="3.6" style="--dx:-12.5px;--dy:-20.0px;--dur:17.0s;--del:-1.4s"/>
+        <circle cx="758" cy="252" r="6.8" style="--dx:3.2px;--dy:-17.9px;--dur:19.0s;--del:-4.9s"/>
+        <circle cx="753" cy="258" r="6.6" style="--dx:13.8px;--dy:-13.5px;--dur:23.7s;--del:-1.2s"/>
+        <circle cx="780" cy="265" r="3.2" style="--dx:9.2px;--dy:-17.7px;--dur:14.5s;--del:-13.3s"/>
+        <circle cx="748" cy="248" r="4.8" style="--dx:-13.2px;--dy:-12.6px;--dur:33.6s;--del:-12.1s"/>
+        <circle cx="753" cy="231" r="3.8" style="--dx:-9.3px;--dy:-9.2px;--dur:24.7s;--del:-10.9s"/>
+        <circle cx="751" cy="266" r="6.4" style="--dx:13.6px;--dy:-8.1px;--dur:30.1s;--del:-11.5s"/>
+        <circle cx="759" cy="232" r="4.7" style="--dx:-4.0px;--dy:-19.6px;--dur:14.6s;--del:-3.9s"/>
+        <circle cx="757" cy="295" r="7.2" style="--dx:-1.5px;--dy:-6.9px;--dur:33.8s;--del:-13.4s"/>
+        <circle cx="748" cy="263" r="2.9" style="--dx:-8.5px;--dy:-17.1px;--dur:26.5s;--del:-12.6s"/>
+        <circle cx="778" cy="222" r="5.5" style="--dx:8.4px;--dy:-18.8px;--dur:27.2s;--del:-12.7s"/>
+        <circle cx="770" cy="203" r="4.4" style="--dx:-9.0px;--dy:-9.0px;--dur:20.7s;--del:-11.2s"/>
+          </g>
+        </g>
+        <ellipse class="spec" cx="694" cy="168" rx="46" ry="22" fill="#FFFFFF" fill-opacity=".38" filter="url(#soft)" transform="rotate(-28 694 168)"/>
+      </g>
+
+      <g class="motes">
+        <circle cx="300" cy="120" r="3.5"/><circle cx="1120" cy="120" r="4"/><circle cx="1210" cy="380" r="3"/>
+        <circle cx="220" cy="400" r="4"/><circle cx="1030" cy="440" r="2.6"/><circle cx="140" cy="250" r="2.6"/>
+      </g>
+    </svg>
+  </div>
+  <div class="in wrap">
+    <h2 class="reveal">Ready to begin your journey?</h2>
+    <p class="reveal" style="--d:.1s">We are here when you are ready. Choose where you are starting from.</p>
+    <div class="pills reveal" style="--d:.2s">
+      <a href="#contact" class="btn btn-light">Become a parent</a>
+      <a href="/countries" class="btn btn-light">Find your country</a>
+      <a href="/costs" class="btn btn-light">See the costs</a>
+      <a href="/faq" class="btn btn-light">Ask a question</a>
+    </div>
+  </div>
+</div>
+
+<!-- DEV NOTE (journey band): Journey band background · 2400 × 1000 · /img/journey.webp Abstract macro photograph of warm amber oil droplets on a pale cream surface, one large soft circle centred with a bright translucent core, gentle bokeh, gradient from deep terracotta at the edges to luminous cream in the middle, fine-art abstract, no objects, no text. --ar 12:5 --style raw -->
+
+<!-- ===================== CONTACT ===================== -->
+<section class="contact" id="contact">
+  <div class="wrap grid">
+    <div class="reveal">
+      <div class="kicker">Talk to a coordinator</div>
+      <h2 style="margin-top:20px">Bring your questions. We will give you the unflattering answers too.</h2>
+      <p class="intro">A 30-minute call, no deck and no pressure. If your country makes this path hard, or your medical history changes the odds, you will hear it on the first call.</p>
+      <div class="ch">
+        <a href="https://cal.com/YOUR_HANDLE/30min">Book directly — cal.com</a>
+        <a href="https://wa.me/10000000000">WhatsApp</a>
+        <a href="mailto:hello@reprolegal.com">hello@reprolegal.com</a>
+      </div>
+    </div>
+    <form class="reveal" style="--d:.1s" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <div class="field"><input type="text" name="name" placeholder="Your name" required /></div>
+      <div class="field"><input type="email" name="email" placeholder="name@email.com" required /></div>
+      <div class="field"><input type="text" name="country" placeholder="Country of residence" /></div>
+      <div class="field"><select name="situation">
+        <option>Couple — we have frozen embryos</option>
+        <option>Couple — using our own eggs</option>
+        <option>Couple — we need an egg donor</option>
+        <option>Single intended father</option>
+        <option>Single intended mother</option>
+        <option>Same-sex couple</option>
+        <option>Still researching</option>
+      </select></div>
+      <div class="field"><textarea name="message" rows="3" placeholder="Where are you in the process?"></textarea></div>
+      <label class="consent"><input type="checkbox" name="consent" required /> I agree to be contacted about my enquiry and have read the privacy policy.</label>
+      <button class="btn btn-light" type="submit">Send</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4 class="fbrand"><svg class="mk" width="30" height="20" viewBox="0 0 80 52" aria-hidden="true"><path d="M8 44 A32 32 0 0 1 72 44" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M22 44 A18 18 0 0 1 58 44" fill="none" stroke="#B5713C" stroke-width="5.5" stroke-linecap="round"/><circle cx="40" cy="44" r="3.6" fill="currentColor"/></svg><span>ReproLegal</span></h4>
+        <p>Coordination of surrogacy and IVF programmes for intended parents — fixed pricing, milestone payments, independent counsel and one named contact throughout.</p>
+      </div>
+      <div><h4>Programmes</h4><ul><li><a href="/programmes">Frozen embryo transfer</a></li><li><a href="/programmes">Own eggs</a></li><li><a href="/programmes">Egg donation</a></li><li><a href="/programmes">Single parents</a></li><li><a href="/programmes">Same-sex couples</a></li></ul></div>
+      <div><h4>Planning</h4><ul><li><a href="/costs">Costs</a></li><li><a href="/how-it-works">How it works</a></li><li><a href="/countries">Countries</a></li><li><a href="/faq">FAQ</a></li><li><a href="/blog">Journal</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="/#team">Team</a></li><li><a href="/stories">Stories</a></li><li><a href="#contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/ua/">Українська</a></li></ul></div>
+    </div>
+    <div class="fbot">
+      <span>© 2026 ReproLegal</span>
+      <span>Information about programme coordination, not medical or legal advice. No clinical outcome is guaranteed.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/site.js" defer></script>
+<script src="/assets/explorer.js" defer></script>
+</body>
+</html>

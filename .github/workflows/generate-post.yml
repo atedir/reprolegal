@@ -1,0 +1,35 @@
+name: Generate SEO article
+
+on:
+  schedule:
+    - cron: "0 7 */3 * *"   # every third day, 07:00 UTC — deliberately not daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-post
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate article
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-post.mjs
+
+      - name: Commit
+        run: |
+          git config user.name  "reprolegal-bot"
+          git config user.email "bot@reprolegal.com"
+          git add blog blog.html sitemap.xml content/topics.txt
+          git diff --staged --quiet || git commit -m "content: new article"
+          git push

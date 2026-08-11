@@ -1,0 +1,17 @@
+name = "reprolegal"
+main = "_worker.js"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "."
+binding = "ASSETS"
+# serves /countries from countries.html and /countries/ukraine from countries/ukraine.html
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+
+[[kv_namespaces]]
+binding = "VIEWS"
+id = "PUT_YOUR_KV_NAMESPACE_ID_HERE"
+
+[vars]
+SITE_URL = "https://reprolegal.com"

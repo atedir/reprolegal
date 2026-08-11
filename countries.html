@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Surrogacy by country — where it is legal and for whom | ReproLegal</title>
+<meta name="description" content="Pick your situation and country of residence to see which of our ten surrogacy destinations accept you, and what you still have to do at home afterwards." />
+<link rel="canonical" href="https://reprolegal.com/countries" />
+<link rel="alternate" hreflang="en" href="https://reprolegal.com/countries" />
+<link rel="alternate" hreflang="uk" href="https://reprolegal.com/ua/countries" />
+<link rel="alternate" hreflang="x-default" href="https://reprolegal.com/countries" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Surrogacy by country — where it is legal and for whom | ReproLegal" />
+<meta property="og:description" content="Pick your situation and country of residence to see which of our ten surrogacy destinations accept you, and what you still have to do at home afterwards." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:image" content="https://reprolegal.com/img/og.png" />
+<meta property="og:url" content="https://reprolegal.com/countries" />
+<meta name="theme-color" content="#272320" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="stylesheet" href="/assets/site.css" />
+<style>
+/* countries page — self-contained, nothing here positions outside its own box */
+.mgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:44px;align-items:start}
+.mcol{min-width:0}
+.mlabel{margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{position:relative;display:inline-block}
+.chip input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:inline-block;font-family:var(--disp);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;padding:11px 18px;border:1px solid var(--line2);border-radius:999px;color:var(--ink2);transition:background .18s,border-color .18s,color .18s}
+.chip:hover span{border-color:var(--ink3)}
+.chip input:checked + span{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip input:focus-visible + span{outline:2px solid var(--amber);outline-offset:3px}
+.combo{position:relative;max-width:100%}
+.combo input{font-family:var(--ui);font-size:15px;padding:13px 15px;border:1px solid var(--line2);background:var(--paper);color:var(--ink);width:100%;box-sizing:border-box}
+.combo input:focus{outline:none;border-color:var(--ink)}
+.combo ul{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--paper);border:1px solid var(--line2);max-height:270px;overflow:auto;list-style:none;margin:0;padding:0;box-shadow:0 20px 46px -30px rgba(40,32,24,.5);z-index:40;display:none}
+.combo.open ul{display:block}
+.combo li{padding:11px 15px;font-size:14.5px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
+.combo li:hover,.combo li.hl{background:var(--cream)}
+.combo li small{color:var(--ink3);font-size:11px}
+.combo li.grp{font-family:var(--disp);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);cursor:default;padding:11px 15px 5px}
+.combo li.grp:hover{background:none}
+.popchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.popchips button{font-family:var(--ui);font-size:12.5px;padding:7px 14px;border:1px solid var(--line2);border-radius:999px;background:var(--paper);color:var(--ink2);cursor:pointer}
+.popchips button:hover{border-color:var(--ink3);color:var(--ink)}
+.popchips button.on{background:var(--cream);border-color:var(--amber);color:var(--amber-dk)}
+.homenote{font-size:14px;color:var(--ink2);background:var(--cream);padding:14px 16px;margin-top:14px;line-height:1.6}
+.tally{font-size:15px;color:var(--ink2);margin-bottom:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.tally b{color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.dcardc{border:1px solid var(--line);padding:30px;display:flex;flex-direction:column;min-width:0}
+.dcardc.no{background:var(--cream);opacity:.72}
+.dcardc .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px}
+.dcardc h3{font-size:20px;letter-spacing:.1em}
+.dcardc .region{font-family:var(--disp);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-top:7px}
+.dcardc p.d{font-size:15.5px;color:var(--ink2);flex:1}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.who span{font-family:var(--disp);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:6px 11px;background:var(--cream2);color:var(--ink3)}
+.who span.yes{background:#EDF2E6;color:#4A6B45}
+.meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--disp);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.meta b{display:block;font-size:19px;letter-spacing:.02em;text-transform:none;color:var(--ink);font-weight:300;margin-top:6px}
+.athome{font-size:14px;color:var(--ink2);background:var(--cream);padding:13px 16px;margin-top:18px;line-height:1.6}
+.athome b{color:var(--amber-dk)}
+.blocked{font-size:14px;color:#9B4A36;margin-top:14px}
+.sechead{margin:48px 0 20px;font-family:var(--disp);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3)}
+.emptystate{border:1px dashed var(--line2);padding:44px;text-align:center;color:var(--ink2)}
+@media(max-width:900px){.mgrid{grid-template-columns:1fr;gap:30px}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header id="hdr" class="solid">
+  <div class="wrap nav">
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <a href="/" class="brand"><svg class="mk" width="34" height="22" viewBox="0 0 80 52" aria-hidden="true"><path d="M8 44 A32 32 0 0 1 72 44" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M22 44 A18 18 0 0 1 58 44" fill="none" stroke="#B5713C" stroke-width="5.5" stroke-linecap="round"/><circle cx="40" cy="44" r="3.6" fill="currentColor"/></svg><span class="tx">ReproLegal<small>Surrogacy &amp; Donation</small></span></a>
+    <div class="navr">
+      <a href="/countries" class="hide-s">Countries</a>
+      <a href="/costs" class="hide-s">Costs</a>
+      <a href="/#contact">Start your journey</a>
+    </div>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <button class="close" id="close">Close</button>
+  <nav>
+    <a href="/programmes">Programmes</a><a href="/costs">Costs</a><a href="/how-it-works">How it works</a>
+    <a href="/countries">Countries</a><a href="/stories">Stories</a><a href="/faq">FAQ</a>
+    <a href="/blog">Journal</a><a href="/#contact">Contact</a>
+  </nav>
+</div>
+<div class="pagehead">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">Home</a> · Countries</div>
+    <h1>Which of our ten destinations fits your case?</h1>
+    <p>Eligibility is decided twice — once by the destination, once by the country whose passport you hold. Set both and you will see only the routes that survive both tests.</p>
+    <div class="factbox" style="margin-top:30px"><div class="k">Draft data</div>Status, eligibility and home-country notes are placeholders pending confirmation by local counsel, and are re-checked per enquiry. Surrogacy law changes faster than websites do.</div>
+  </div>
+</div>
+
+<section style="padding:70px 0 40px">
+  <div class="wrap">
+    <div class="mgrid">
+      <div class="mcol">
+        <div class="kicker mlabel">Who is applying</div>
+        <div class="chips" id="whoChips">
+          <label class="chip"><input type="radio" name="who" value="married" checked /><span>Married couple</span></label>
+          <label class="chip"><input type="radio" name="who" value="unmarried" /><span>Unmarried couple</span></label>
+          <label class="chip"><input type="radio" name="who" value="samesex" /><span>Same-sex couple</span></label>
+          <label class="chip"><input type="radio" name="who" value="singlef" /><span>Single father</span></label>
+          <label class="chip"><input type="radio" name="who" value="singlem" /><span>Single mother</span></label>
+        </div>
+      </div>
+      <div class="mcol">
+        <div class="kicker mlabel">Country of residence</div>
+        <div class="combo" id="combo">
+          <input type="text" id="homeInput" role="combobox" aria-expanded="false" aria-autocomplete="list" autocomplete="off" placeholder="Type a country — or pick one below" />
+          <ul id="homeList" role="listbox"></ul>
+        </div>
+        <div class="popchips" id="popchips"></div>
+        <div class="homenote" id="homenote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:20px 0 100px;border-bottom:0">
+  <div class="wrap">
+    <div class="tally" id="tally"></div>
+    <div class="cards" id="cards"></div>
+    <div id="blockedWrap"></div>
+  </div>
+</section>
+<section style="background:var(--cream);border-bottom:0;text-align:center;padding:110px 0">
+  <div class="wrap">
+    <h2 class="reveal">Ready to begin?</h2>
+    <p class="reveal" style="--d:.1s;color:var(--ink2);max-width:52ch;margin:22px auto 38px">A 30-minute call, no deck and no pressure. If your country makes this path hard, you will hear it first.</p>
+    <div class="pills reveal" style="--d:.2s;justify-content:center">
+      <a href="/#contact" class="btn btn-ink">Book a free 30-minute call</a>
+      <a href="/countries" class="btn btn-line">Find your country</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4 class="fbrand"><svg class="mk" width="30" height="20" viewBox="0 0 80 52" aria-hidden="true"><path d="M8 44 A32 32 0 0 1 72 44" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M22 44 A18 18 0 0 1 58 44" fill="none" stroke="#B5713C" stroke-width="5.5" stroke-linecap="round"/><circle cx="40" cy="44" r="3.6" fill="currentColor"/></svg><span>ReproLegal</span></h4>
+        <p>Coordination of surrogacy and IVF programmes for intended parents — fixed pricing, milestone payments, independent legal counsel and one named contact throughout.</p>
+      </div>
+      <div><h4>Programmes</h4><ul><li><a href="/programmes">Frozen embryo transfer</a></li><li><a href="/programmes">Own eggs</a></li><li><a href="/programmes">Egg donation</a></li><li><a href="/programmes">Single parents</a></li><li><a href="/programmes">Same-sex couples</a></li></ul></div>
+      <div><h4>Planning</h4><ul><li><a href="/costs">Costs</a></li><li><a href="/how-it-works">How it works</a></li><li><a href="/countries">Countries</a></li><li><a href="/faq">FAQ</a></li><li><a href="/blog">Journal</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="/#team">Team</a></li><li><a href="/stories">Stories</a></li><li><a href="/#contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/cookies">Cookies</a></li><li><a href="/ua/">Українська</a></li></ul></div>
+    </div>
+    <div class="fbot">
+      <span>© 2026 ReproLegal</span>
+      <span>Information about programme coordination, not medical or legal advice. No clinical outcome is guaranteed.</span>
+    </div>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+<script>var DEST=[{"slug": "ukraine", "n": "Ukraine", "r": "Eastern Europe", "status": "ok", "allows": ["married"], "cost": "$48k \u2013 $58k", "time": "14 \u2013 18 months", "d": "A statutory framework in which the intended parents are recorded on the birth certificate from birth, with no adoption step in country. Marriage and a documented medical indication are required.", "facts": [["Legal basis", "Family Code, statutory [verify]"], ["Marital status", "Married couples only [verify]"], ["Birth certificate", "Intended parents from birth [verify]"], ["Time in country", "2\u20134 weeks after birth [verify]"], ["Exit route", "Embassy travel document [verify]"]]}, {"slug": "georgia", "n": "Georgia", "r": "Caucasus", "status": "ok", "allows": ["married", "unmarried"], "cost": "$45k \u2013 $55k", "time": "13 \u2013 17 months", "d": "Long-established programmes with a predictable document chain and clinics used to foreign intended parents. Requirements for non-residents apply and change periodically.", "facts": [["Legal basis", "Statutory, health law [verify]"], ["Marital status", "Couples [verify]"], ["Birth certificate", "Intended parents from birth [verify]"], ["Time in country", "2\u20134 weeks after birth [verify]"], ["Exit route", "Embassy travel document [verify]"]]}, {"slug": "armenia", "n": "Armenia", "r": "Caucasus", "status": "ok", "allows": ["married", "unmarried", "singlem"], "cost": "$45k \u2013 $55k", "time": "13 \u2013 18 months", "d": "A regulated route with a shorter document chain than most of the region, and eligibility that extends further than its neighbours.", "facts": [["Legal basis", "Statutory [verify]"], ["Marital status", "Couples and single women [verify]"], ["Birth certificate", "Intended parents [verify]"], ["Time in country", "2\u20135 weeks after birth [verify]"], ["Exit route", "Embassy travel document [verify]"]]}, {"slug": "czechia", "n": "Czechia", "r": "Central Europe", "status": "mid", "allows": ["married"], "cost": "$55k \u2013 $70k", "time": "15 \u2013 20 months", "d": "No dedicated surrogacy statute. The route runs through established medical practice and family-law procedure, which means the legal sequence matters more here than anywhere else on this list.", "facts": [["Legal basis", "No specific statute [verify]"], ["Marital status", "Married couples [verify]"], ["Birth certificate", "Court/adoption step likely [verify]"], ["Time in country", "Varies [verify]"], ["Exit route", "Case by case [verify]"]]}, {"slug": "albania", "n": "Albania", "r": "Southern Europe", "status": "mid", "allows": ["married", "unmarried", "samesex", "singlef", "singlem"], "cost": "$50k \u2013 $65k", "time": "14 \u2013 19 months", "d": "Broad eligibility in practice with the legal tail handled after birth. Attractive for applicants excluded elsewhere, provided recognition at home is planned in advance.", "facts": [["Legal basis", "Practice, no dedicated statute [verify]"], ["Marital status", "All applicant types [verify]"], ["Birth certificate", "Intended parents [verify]"], ["Time in country", "3\u20136 weeks after birth [verify]"], ["Exit route", "Embassy, varies by nationality [verify]"]]}, {"slug": "colombia", "n": "Colombia", "r": "Latin America", "status": "mid", "allows": ["married", "unmarried", "samesex", "singlef", "singlem"], "cost": "$60k \u2013 $75k", "time": "16 \u2013 22 months", "d": "Practice established through court decisions rather than a dedicated statute. The broadest eligibility of the group, with the longest legal sequence to match.", "facts": [["Legal basis", "Case law [verify]"], ["Marital status", "All applicant types [verify]"], ["Birth certificate", "Intended parents via court [verify]"], ["Time in country", "4\u20138 weeks after birth [verify]"], ["Exit route", "Consular process [verify]"]]}, {"slug": "mexico", "n": "Mexico", "r": "Latin America", "status": "mid", "allows": ["married", "unmarried", "samesex", "singlef", "singlem"], "cost": "$60k \u2013 $78k", "time": "16 \u2013 22 months", "d": "State-level differences are decisive. Choosing the state is part of the plan, not a detail, and the choice drives both the timeline and the exit process.", "facts": [["Legal basis", "State level, varies [verify]"], ["Marital status", "All applicant types [verify]"], ["Birth certificate", "State dependent [verify]"], ["Time in country", "4\u201310 weeks after birth [verify]"], ["Exit route", "Consular process [verify]"]]}, {"slug": "united-states", "n": "United States", "r": "North America", "status": "ok", "allows": ["married", "unmarried", "samesex", "singlef", "singlem"], "cost": "$140k \u2013 $190k", "time": "18 \u2013 24 months", "d": "State-level regulation with pre-birth orders available in several states. The highest cost band on this list and the strongest recognition afterwards, including automatic citizenship for the child.", "facts": [["Legal basis", "State statutes and case law [verify]"], ["Marital status", "All applicant types [verify]"], ["Birth certificate", "Pre-birth order in many states [verify]"], ["Time in country", "3\u20136 weeks after birth [verify]"], ["Exit route", "US passport for the child [verify]"]]}, {"slug": "canada", "n": "Canada", "r": "North America", "status": "ok", "allows": ["married", "unmarried", "samesex", "singlef", "singlem"], "cost": "$95k \u2013 $130k", "time": "18 \u2013 26 months", "d": "An altruistic model: the surrogate is reimbursed for expenses rather than compensated. That keeps the framework clean and lengthens matching considerably.", "facts": [["Legal basis", "Federal AHRA plus provincial law [verify]"], ["Marital status", "All applicant types [verify]"], ["Birth certificate", "Declaration of parentage [verify]"], ["Time in country", "4\u20138 weeks after birth [verify]"], ["Exit route", "Canadian passport for the child [verify]"]]}, {"slug": "abu-dhabi", "n": "Abu Dhabi", "r": "Middle East (UAE)", "status": "mid", "allows": ["married"], "cost": "$70k \u2013 $95k", "time": "16 \u2013 22 months", "d": "A newer regulated route with strict marital and documentation requirements, and the shortest travel time for intended parents based in the Gulf.", "facts": [["Legal basis", "Emirate-level regulation [verify]"], ["Marital status", "Married couples only [verify]"], ["Birth certificate", "Intended parents [verify]"], ["Time in country", "3\u20136 weeks after birth [verify]"], ["Exit route", "Embassy travel document [verify]"]]}];</script>
+<script src="/assets/matcher.js" defer></script>
+</body>
+</html>
