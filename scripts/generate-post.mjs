@@ -39,10 +39,21 @@ Hard rules:
 - Never state a legal position as settled fact; write "as of writing" and advise confirming with local counsel.
 - Never invent statistics, prices, clinic names or case studies. If a figure is needed, give a range and label it typical.
 - This is not medical or legal advice and must say so once, at the end.
-Return ONLY a JSON object, no markdown fence, with keys:
-title (max 70 chars), description (max 155 chars), category (one of: Legal, Money, Medical, Due diligence, Destinations),
-readMinutes (integer), bodyHtml (h2/h3/p/ul/ol/li/blockquote/a only; 900-1400 words; include 2-3 internal links
-chosen from /countries /costs /how-it-works /programmes /faq).`;
+Return the article in exactly this format, with nothing before or after.
+Do not use markdown fences. Do not use JSON.
+
+<<<TITLE>>>
+the headline, max 70 characters
+<<<DESCRIPTION>>>
+meta description, max 155 characters, one line
+<<<CATEGORY>>>
+one of: Legal, Money, Medical, Due diligence, Destinations
+<<<READMINUTES>>>
+a single integer
+<<<BODY>>>
+the article body as HTML using only h2, h3, p, ul, ol, li, blockquote and a tags.
+900-1400 words. Include 2-3 internal links chosen from /countries /costs /how-it-works /programmes /faq.
+<<<END>>>`;
 
 async function nextTopic() {
   let raw = '';
@@ -124,7 +135,26 @@ const run = async () => {
   console.log('Topic:', topic);
 
   const raw = await claude(SYSTEM, `Write the article. Topic: ${topic}`);
-  const post = JSON.parse(raw.replace(/^```json|^```|```$/gm, '').trim());
+
+  const field = (name, next) => {
+    const re = new RegExp('<<<' + name + '>>>([\\s\\S]*?)<<<' + next + '>>>');
+    const m = raw.match(re);
+    if (!m) throw new Error('Model output missing section ' + name + '. Raw start:\n' + raw.slice(0, 400));
+    return m[1].trim();
+  };
+
+  const post = {
+    title:       field('TITLE', 'DESCRIPTION'),
+    description: field('DESCRIPTION', 'CATEGORY').replace(/\s+/g, ' '),
+    category:    field('CATEGORY', 'READMINUTES'),
+    readMinutes: parseInt(field('READMINUTES', 'BODY'), 10) || 7,
+    bodyHtml:    field('BODY', 'END')
+  };
+
+  // quotes in title/description would break the HTML attributes they land in
+  const esc = t => t.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  post.title = esc(post.title);
+  post.description = esc(post.description);
 
   const slug = slugify(post.title);
   const now = new Date();
