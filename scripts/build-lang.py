@@ -94,6 +94,12 @@ for page in PAGES:
     body = localise_links(body)
     body = switcher(body, url_path)
 
+    if 'matcher.js' in body:
+        # the matcher renders from JS, so it gets the whole dictionary
+        body = body.replace('<script src="/assets/matcher.js" defer></script>',
+                            '<script>window.MATCH_I18N=%s;</script>\n<script src="/assets/matcher.js" defer></script>'
+                            % json.dumps(T, ensure_ascii=False))
+
     if EXPL and 'explorer.js' in body:
         body = body.replace('<script src="/assets/explorer.js" defer></script>',
                             '<script>window.EXPL_I18N=%s;</script>\n<script src="/assets/explorer.js" defer></script>'

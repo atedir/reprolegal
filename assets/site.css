@@ -177,7 +177,7 @@ section{padding:130px 0}
 
 /* programmes as image cards */
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:stretch}
-.pcard{display:flex;flex-direction:column;height:100%}
+.pcard{color:inherit;display:flex;flex-direction:column;height:100%}
 .pcard .imgwrap{overflow:hidden;margin-bottom:24px}
 .pcard .imgwrap img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
 .pcard .ph{border-radius:0}
