@@ -1,0 +1,54 @@
+name: Generate SEO article
+
+on:
+  schedule:
+    - cron: "0 7 */3 * *"   # every third day, 07:00 UTC — deliberately not daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-post
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate article
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-post.mjs
+
+      - name: Add the publication date to the article and its card
+        run: python3 scripts/backfill-dates.py
+
+      - name: Commit
+        id: commit
+        run: |
+          git config user.name  "reprolegal-bot"
+          git config user.email "bot@reprolegal.com"
+          git add blog blog.html sitemap.xml content/topics.txt
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "content: new article"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A push made with the built-in GITHUB_TOKEN does not trigger other
+      # workflows, so the deploy has to happen here or the article never
+      # reaches the site.
+      - name: Deploy to Cloudflare
+        if: steps.commit.outputs.changed == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

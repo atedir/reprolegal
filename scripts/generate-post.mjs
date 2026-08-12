@@ -15,6 +15,20 @@ const BLOG_INDEX = path.join(ROOT, 'blog.html');
 const SITEMAP = path.join(ROOT, 'sitemap.xml');
 const SITE = 'https://reprolegal.com';
 
+// The header, drawer and footer are lifted straight out of blog.html, so an
+// article can never drift from the rest of the site.
+async function chrome() {
+  const src = await fs.readFile(BLOG_INDEX, 'utf8');
+  const head   = src.slice(src.indexOf('<header'), src.indexOf('</header>') + 9);
+  const drawer = src.slice(src.indexOf('<div class="drawer"'), src.indexOf('</div>', src.indexOf('</nav>')) + 6);
+  const foot   = src.slice(src.indexOf('<footer'), src.indexOf('</footer>') + 9);
+  const gtmHead = src.slice(src.indexOf('<!-- Google Tag Manager -->'),
+                            src.indexOf('<!-- End Google Tag Manager -->') + 31);
+  const gtmBody = src.slice(src.indexOf('<!-- Google Tag Manager (noscript) -->'),
+                            src.indexOf('<!-- End Google Tag Manager (noscript) -->') + 41);
+  return { head, drawer, foot, gtmHead, gtmBody };
+}
+
 const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 70);
 
 async function claude(system, user, maxTokens = 4000) {
@@ -69,7 +83,7 @@ async function nextTopic() {
     `Propose ONE new article topic for this site that is not already covered. Existing files: ${existing}. Reply with the topic only, no punctuation at the end.`, 200);
 }
 
-function articleHtml({ title, description, category, readMinutes, bodyHtml, slug, iso, human }) {
+function articleHtml({ title, description, category, readMinutes, bodyHtml, slug, iso, human, ch }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,11 +93,18 @@ function articleHtml({ title, description, category, readMinutes, bodyHtml, slug
 <meta name="description" content="${description}" />
 <link rel="canonical" href="${SITE}/blog/${slug}" />
 <meta property="og:type" content="article" />
+<meta property="article:published_time" content="${iso}" />
 <meta property="og:title" content="${title}" />
 <meta property="og:description" content="${description}" />
+<meta property="og:image" content="${SITE}/img/og.png" />
 <meta property="og:url" content="${SITE}/blog/${slug}" />
-<meta property="article:published_time" content="${iso}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#272320" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css" />
 <script type="application/ld+json">
@@ -92,29 +113,26 @@ function articleHtml({ title, description, category, readMinutes, bodyHtml, slug
 "author":{"@type":"Organization","name":"ReproLegal"},"publisher":{"@type":"Organization","name":"ReproLegal"},
 "mainEntityOfPage":"${SITE}/blog/${slug}"}
 </script>
+${ch.gtmHead}
 </head>
 <body>
-<header id="hdr" class="solid">
-  <div class="wrap nav">
-    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
-    <a href="/" class="brand">ReproLegal<small>Surrogacy &amp; Donation</small></a>
-    <div class="navr"><a href="/countries" class="hide-s">Countries</a><a href="/costs" class="hide-s">Costs</a><a href="/#contact">Start your journey</a></div>
-  </div>
-</header>
-<div class="drawer" id="drawer"><button class="close" id="close">Close</button>
-  <nav><a href="/programmes">Programmes</a><a href="/costs">Costs</a><a href="/how-it-works">How it works</a><a href="/countries">Countries</a><a href="/stories">Stories</a><a href="/faq">FAQ</a><a href="/blog">Journal</a><a href="/#contact">Contact</a></nav>
-</div>
+${ch.gtmBody}
+${ch.head}
+${ch.drawer}
 <div class="pagehead"><div class="wrap">
   <div class="crumbs"><a href="/">Home</a> · <a href="/blog">Journal</a> · ${category}</div>
   <h1>${title}</h1>
   <p>${description}</p>
-  <div style="margin-top:20px"><span class="views" id="views">—</span> <span class="views">· ${human} · ${readMinutes} min</span></div>
+  <div style="margin-top:20px">
+    <span class="views" id="views">—</span>
+    <span class="views pubdate">· ${human} · ${readMinutes} min</span>
+  </div>
 </div></div>
 <section style="padding:80px 0"><div class="wrap"><div class="prose">
 ${bodyHtml}
 <div class="factbox"><div class="k">Not medical or legal advice</div>This article describes how programmes are structured. Eligibility and recognition depend on your country of residence — confirm your route with local counsel.</div>
 </div></div></section>
-<footer><div class="wrap"><div class="fbot"><span>© ${new Date().getFullYear()} ReproLegal</span><span><a href="/blog">All articles</a> · <a href="/privacy">Privacy</a></span></div></div></footer>
+${ch.foot}
 <script src="/assets/site.js" defer></script>
 </body>
 </html>
@@ -122,7 +140,6 @@ ${bodyHtml}
 }
 
 const card = ({ slug, category, readMinutes, title, description, human }) => `      <a class="post reveal" href="/blog/${slug}">
-        <div class="thumb"><img src="/img/prog-fet.webp" alt="" loading="lazy" /></div>
         <div class="m">${category} · ${readMinutes} min · ${human}</div>
         <h3>${title}</h3>
         <p>${description}</p>
@@ -163,8 +180,9 @@ const run = async () => {
   const human = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
   await fs.mkdir(path.join(ROOT, 'blog'), { recursive: true });
+  const ch = await chrome();
   await fs.writeFile(path.join(ROOT, 'blog', slug + '.html'),
-    articleHtml({ ...post, slug, iso, human }));
+    articleHtml({ ...post, slug, iso, human, ch }));
 
   // newest card first, right after the marker
   const idx = await fs.readFile(BLOG_INDEX, 'utf8');
