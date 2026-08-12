@@ -121,9 +121,9 @@ ${bodyHtml}
 `;
 }
 
-const card = ({ slug, category, readMinutes, title, description }) => `      <a class="post reveal" href="/blog/${slug}">
+const card = ({ slug, category, readMinutes, title, description, human }) => `      <a class="post reveal" href="/blog/${slug}">
         <div class="thumb"><img src="/img/prog-fet.webp" alt="" loading="lazy" /></div>
-        <div class="m">${category} · ${readMinutes} min</div>
+        <div class="m">${category} · ${readMinutes} min · ${human}</div>
         <h3>${title}</h3>
         <p>${description}</p>
         <span class="go">Read</span>
@@ -168,7 +168,7 @@ const run = async () => {
 
   // newest card first, right after the marker
   const idx = await fs.readFile(BLOG_INDEX, 'utf8');
-  await fs.writeFile(BLOG_INDEX, idx.replace('<!-- POSTS -->', '<!-- POSTS -->\n' + card({ ...post, slug })));
+  await fs.writeFile(BLOG_INDEX, idx.replace('<!-- POSTS -->', '<!-- POSTS -->\n' + card({ ...post, slug, human })));
 
   // sitemap entry
   const sm = await fs.readFile(SITEMAP, 'utf8');
