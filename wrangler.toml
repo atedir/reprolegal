@@ -11,7 +11,7 @@ not_found_handling = "404-page"
 
 [[kv_namespaces]]
 binding = "VIEWS"
-id = "d2237735ebcb4ff687fe4bcb6e165cde"
+id = "PUT_YOUR_KV_NAMESPACE_ID_HERE"
 
 [vars]
 SITE_URL = "https://reprolegal.com"

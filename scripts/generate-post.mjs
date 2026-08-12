@@ -127,6 +127,7 @@ const card = ({ slug, category, readMinutes, title, description }) => `      <a 
         <h3>${title}</h3>
         <p>${description}</p>
         <span class="go">Read</span>
+        <span class="views" data-views="/blog/${slug}" style="margin-top:10px"></span>
       </a>
 `;
 

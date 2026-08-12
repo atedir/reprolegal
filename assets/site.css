@@ -206,7 +206,8 @@ section{padding:130px 0}
 
 /* countries grid */
 .cgrid{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.cc{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 20px;text-align:center;transition:background .3s}
+.cc{display:block;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 20px;text-align:center;transition:background .3s,color .2s;color:inherit}
+.cc:hover .cn{color:var(--amber-dk)}
 .cc:hover{background:var(--cream)}
 .cn{display:block;font-family:var(--disp);font-weight:300;font-size:15px;letter-spacing:.12em;text-transform:uppercase}
 .cr{display:block;font-family:var(--disp);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-top:9px}
@@ -400,3 +401,16 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
 .tcarousel.static .tperson{flex:0 1 300px}
 @media(max-width:900px){.tarrow{display:none}.tperson{flex:0 0 238px}.ttrack{gap:24px;scroll-snap-type:x mandatory}}
 @media(max-width:520px){.tperson{flex:0 0 76%}}
+
+/* ---------- language switcher ---------- */
+.lang{position:relative}
+.lang summary{list-style:none;cursor:pointer;font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;padding:7px 12px;border:1px solid rgba(140,130,120,.4);border-radius:999px;color:inherit}
+.lang summary::-webkit-details-marker{display:none}
+.lang summary:hover{border-color:currentColor}
+.langmenu{position:absolute;right:0;top:calc(100% + 8px);background:var(--paper);border:1px solid var(--line2);
+  min-width:172px;box-shadow:0 22px 48px -30px rgba(39,35,32,.55);z-index:60;padding:6px 0}
+.langmenu a{display:block;padding:10px 16px;font-size:14px;color:var(--ink2)}
+.langmenu a:hover{background:var(--cream);color:var(--ink)}
+.langmenu a.on{color:var(--amber-dk)}
+@media(max-width:760px){.lang summary{padding:6px 9px;font-size:9.5px}}

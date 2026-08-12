@@ -176,13 +176,30 @@
   });
 
   module('view-counter', function () {
+    // article pages: increment and show
     var el = document.getElementById('views');
-    if (!el) return;
-    fetch('/api/views?path=' + encodeURIComponent(location.pathname))
+    if (el) {
+      fetch('/api/views?path=' + encodeURIComponent(location.pathname))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          el.textContent = (d && typeof d.views === 'number') ? d.views.toLocaleString('en-US') + ' reads' : '';
+        })
+        .catch(function () { el.textContent = ''; });
+    }
+
+    // listing pages: read only, one request for every card
+    var spans = [].slice.call(document.querySelectorAll('[data-views]'));
+    if (!spans.length) return;
+    var paths = spans.map(function (s) { return s.getAttribute('data-views'); });
+    fetch('/api/views?peek=1&paths=' + encodeURIComponent(paths.join(',')))
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d && typeof d.views === 'number') el.textContent = d.views.toLocaleString('en-US') + ' reads';
+        if (!d || !d.views) return;
+        spans.forEach(function (s) {
+          var n = d.views[s.getAttribute('data-views')];
+          s.textContent = (typeof n === 'number' && n > 0) ? n.toLocaleString('en-US') + ' reads' : '';
+        });
       })
-      .catch(function () { el.textContent = ''; });
+      .catch(function () {});
   });
 })();
