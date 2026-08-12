@@ -2,6 +2,7 @@
 (function(){
   var host0=document.getElementById('chart'); if(!host0) return;
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var T=window.EXPL_I18N||{}, t=function(s){return T[s]||s};
   var C=['#A9744C','#C0906B','#D3AC8C','#E4C9B0','#F0E2D3'];
   var DATA={
     fet:{range:'$48,500 – $52,000',items:[
@@ -38,7 +39,7 @@
     var d=DATA[key], total=d.items.reduce(function(a,x){return a+x.v},0);
     svg.innerHTML=''; leg.innerHTML='';
     totalEl.textContent=d.range;
-    subEl.textContent=d.items.length+' line items';
+    subEl.textContent=d.items.length+' '+t('line items');
     var span=180-GAP*(d.items.length-1), start=180;
 
     d.items.forEach(function(it,i){
@@ -51,15 +52,15 @@
       path.setAttribute('stroke-width','13');
       path.setAttribute('stroke-linecap','round');
       path.setAttribute('tabindex','0');
-      path.setAttribute('aria-label',it.l+', '+money(it.v)+', '+pc+' percent');
+      path.setAttribute('aria-label',t(it.l)+', '+money(it.v)+', '+pc+' percent');
       svg.appendChild(path);
       start+=sweep+GAP;
 
       var cell=document.createElement('div');
       cell.className='acell';
       cell.innerHTML='<span class="dot" style="background:'+C[i%C.length]+'"></span>'+
-        '<div class="nm">'+it.l+'</div><div class="am">'+money(it.v)+'</div>'+
-        '<div class="pc">'+pc+'% · '+it.g+'</div>';
+        '<div class="nm">'+t(it.l)+'</div><div class="am">'+money(it.v)+'</div>'+
+        '<div class="pc">'+pc+'% · '+t(it.g)+'</div>';
       leg.appendChild(cell);
 
       function on(){host.classList.add('dim');path.classList.add('on');cell.classList.add('on')}
