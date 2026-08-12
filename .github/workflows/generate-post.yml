@@ -26,10 +26,29 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/generate-post.mjs
 
+      - name: Add the publication date to the article and its card
+        run: python3 scripts/backfill-dates.py
+
       - name: Commit
+        id: commit
         run: |
           git config user.name  "reprolegal-bot"
           git config user.email "bot@reprolegal.com"
           git add blog blog.html sitemap.xml content/topics.txt
-          git diff --staged --quiet || git commit -m "content: new article"
-          git push
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "content: new article"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A push made with the built-in GITHUB_TOKEN does not trigger other
+      # workflows, so the deploy has to happen here or the article never
+      # reaches the site.
+      - name: Deploy to Cloudflare
+        if: steps.commit.outputs.changed == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
