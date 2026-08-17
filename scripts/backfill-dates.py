@@ -22,9 +22,10 @@ for f in sorted(glob.glob('blog/*.html')):
     human = '%d %s %d' % (d.day, MONTHS[d.month], d.year)
     dates['/blog/' + os.path.basename(f)[:-5]] = human
 
-    if 'class="pubdate"' not in s:
-        s = re.sub(r'(<span class="views" id="views">[^<]*</span>)',
-                   r'\1 <span class="views pubdate">· ' + human + '</span>', s, count=1)
+    # strip any date spans already present, then write exactly one
+    s = re.sub(r'\s*<span class="views pubdate">[^<]*</span>', '', s)
+    s = re.sub(r'(<span class="views" id="views">[^<]*</span>)',
+               r'\1 <span class="views pubdate">· ' + human + '</span>', s, count=1)
     open(f, 'w').write(s)
     print('  %-58s %s' % (os.path.basename(f), human))
 

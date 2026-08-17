@@ -21,8 +21,10 @@ for f in glob.glob('blog/*.html'):
         s = s[:s.index('<footer')] + foot + s[s.index('</footer>')+9:]
     # GTM, favicon and manifest, if the article predates them
     if 'GTM-PKVPH96L' not in s:
-        gtm_head = src[src.index('<!-- Google Tag Manager -->'):src.index('<!-- End Google Tag Manager -->')+31]
-        gtm_body = src[src.index('<!-- Google Tag Manager (noscript) -->'):src.index('<!-- End Google Tag Manager (noscript) -->')+41]
+        HEAD_END = '<!-- End Google Tag Manager -->'
+        BODY_END = '<!-- End Google Tag Manager (noscript) -->'
+        gtm_head = src[src.index('<!-- Google Tag Manager -->'):src.index(HEAD_END) + len(HEAD_END)]
+        gtm_body = src[src.index('<!-- Google Tag Manager (noscript) -->'):src.index(BODY_END) + len(BODY_END)]
         s = s.replace('</head>', gtm_head + '\n</head>', 1).replace('<body>', '<body>\n' + gtm_body, 1)
     if 'favicon.svg' not in s:
         s = s.replace('<link rel="stylesheet" href="/assets/site.css" />',
@@ -30,6 +32,15 @@ for f in glob.glob('blog/*.html'):
                       '<link rel="apple-touch-icon" href="/apple-touch-icon.png" />\n'
                       '<link rel="manifest" href="/site.webmanifest" />\n'
                       '<link rel="stylesheet" href="/assets/site.css" />', 1)
+    # repair the truncated GTM comment that swallowed the rest of the document
+    s = s.replace('<!-- End Google Tag Manager (noscript) --\n', '<!-- End Google Tag Manager (noscript) -->\n')
+    s = s.replace('<!-- End Google Tag Manager --\n', '<!-- End Google Tag Manager -->\n')
+
+    # refuse to write a file whose comments are unbalanced
+    if s.count('<!--') != s.count('-->'):
+        print('  SKIPPED %s — unbalanced HTML comments, fix by hand' % f)
+        continue
+
     if s != o:
         open(f, 'w').write(s); n += 1
         print('  fixed', f)

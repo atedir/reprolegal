@@ -22,10 +22,12 @@ async function chrome() {
   const head   = src.slice(src.indexOf('<header'), src.indexOf('</header>') + 9);
   const drawer = src.slice(src.indexOf('<div class="drawer"'), src.indexOf('</div>', src.indexOf('</nav>')) + 6);
   const foot   = src.slice(src.indexOf('<footer'), src.indexOf('</footer>') + 9);
+  const HEAD_END = '<!-- End Google Tag Manager -->';
+  const BODY_END = '<!-- End Google Tag Manager (noscript) -->';
   const gtmHead = src.slice(src.indexOf('<!-- Google Tag Manager -->'),
-                            src.indexOf('<!-- End Google Tag Manager -->') + 31);
+                            src.indexOf(HEAD_END) + HEAD_END.length);
   const gtmBody = src.slice(src.indexOf('<!-- Google Tag Manager (noscript) -->'),
-                            src.indexOf('<!-- End Google Tag Manager (noscript) -->') + 41);
+                            src.indexOf(BODY_END) + BODY_END.length);
   return { head, drawer, foot, gtmHead, gtmBody };
 }
 
@@ -181,8 +183,25 @@ const run = async () => {
 
   await fs.mkdir(path.join(ROOT, 'blog'), { recursive: true });
   const ch = await chrome();
-  await fs.writeFile(path.join(ROOT, 'blog', slug + '.html'),
-    articleHtml({ ...post, slug, iso, human, ch }));
+  const html = articleHtml({ ...post, slug, iso, human, ch });
+
+  // Sanity checks. A malformed article is worse than no article: an unclosed
+  // comment or tag swallows the whole document and the page renders blank.
+  const problems = [];
+  if ((html.match(/<!--/g) || []).length !== (html.match(/-->/g) || []).length)
+    problems.push('unbalanced HTML comments');
+  for (const tag of ['div', 'section', 'noscript', 'script', 'header', 'footer', 'p']) {
+    const open = (html.match(new RegExp('<' + tag + '[\\s>]', 'g')) || []).length;
+    const close = (html.match(new RegExp('</' + tag + '>', 'g')) || []).length;
+    if (open !== close) problems.push(`${tag}: ${open} open vs ${close} closed`);
+  }
+  if (!html.trimEnd().endsWith('</html>')) problems.push('document does not end with </html>');
+  if (problems.length) {
+    console.error('Refusing to write a malformed article:\n  ' + problems.join('\n  '));
+    process.exit(1);
+  }
+
+  await fs.writeFile(path.join(ROOT, 'blog', slug + '.html'), html);
 
   // newest card first, right after the marker
   const idx = await fs.readFile(BLOG_INDEX, 'utf8');

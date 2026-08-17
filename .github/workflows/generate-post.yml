@@ -29,6 +29,9 @@ jobs:
       - name: Add the publication date to the article and its card
         run: python3 scripts/backfill-dates.py
 
+      - name: Structural check
+        run: python3 scripts/check-pages.py
+
       - name: Commit
         id: commit
         run: |
