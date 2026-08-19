@@ -11,3 +11,7 @@ package*.json
 package.json
 package-lock.json
 .wrangler/
+.git
+.git/**
+*.zip
+node_modules
