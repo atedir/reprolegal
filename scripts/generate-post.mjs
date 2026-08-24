@@ -141,6 +141,32 @@ ${ch.foot}
 `;
 }
 
+// Two or three links to sibling articles. Google walks a site by links, and an
+// article nothing points at gets almost no attention.
+async function furtherReading(currentSlug) {
+  const files = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => []))
+    .filter(f => f.endsWith('.html') && f !== currentSlug + '.html');
+  if (!files.length) return '';
+
+  const items = [];
+  for (const f of files) {
+    const s = await fs.readFile(path.join(ROOT, 'blog', f), 'utf8');
+    const t = (s.match(/<title>(.*?)\s*\|/s) || [])[1];
+    const cat = (s.match(/· ([A-Za-z ]+)<\/div>\s*<h1>/s) || [])[1];
+    const iso = (s.match(/article:published_time" content="([^"]{10})/) || [])[1] || '';
+    if (t) items.push({ slug: f.slice(0, -5), title: t.trim(), cat: (cat || '').trim(), iso });
+  }
+  if (!items.length) return '';
+
+  // newest first, so the block stays fresh as the archive grows
+  items.sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+  const picked = items.slice(0, 3);
+
+  return `<h2>Further reading</h2>\n<ul>\n` +
+    picked.map(i => `  <li><a href="/blog/${i.slug}">${i.title}</a></li>`).join('\n') +
+    `\n</ul>\n`;
+}
+
 const card = ({ slug, category, readMinutes, title, description, human }) => `      <a class="post reveal" href="/blog/${slug}">
         <div class="m">${category} · ${readMinutes} min · ${human}</div>
         <h3>${title}</h3>
@@ -183,6 +209,7 @@ const run = async () => {
 
   await fs.mkdir(path.join(ROOT, 'blog'), { recursive: true });
   const ch = await chrome();
+  post.bodyHtml += '\n' + await furtherReading(slug);
   const html = articleHtml({ ...post, slug, iso, human, ch });
 
   // Sanity checks. A malformed article is worse than no article: an unclosed
