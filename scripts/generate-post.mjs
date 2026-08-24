@@ -81,8 +81,22 @@ async function nextTopic() {
     return topic;
   }
   const existing = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => [])).join(', ');
-  return await claude(SYSTEM.split('Return ONLY')[0],
-    `Propose ONE new article topic for this site that is not already covered. Existing files: ${existing}. Reply with the topic only, no punctuation at the end.`, 200);
+
+  // A short, single-purpose system prompt for this call. Reusing the article
+  // prompt here made the model start writing an article instead of naming one.
+  // max_tokens stays generous even though the answer is one line: a tight cap
+  // can be consumed before any visible output is produced, and the script then
+  // gets an empty string with no error anywhere in the logs.
+  const topicSystem = `You suggest article topics for ReproLegal, an agency coordinating surrogacy and IVF programmes for intended parents. Topics must be practical and specific: law by country, what programmes cost, how to verify an agency, documents and recognition at home. No hype. Answer with the topic only, on one line, no quotes and no full stop.`;
+
+  const proposed = await claude(topicSystem,
+    `Propose ONE new article topic that is not already covered. Existing articles: ${existing}`, 600);
+
+  const topic = proposed.split('\n').map(s => s.trim()).filter(Boolean)[0] || '';
+  if (!topic || topic.length < 15) {
+    throw new Error('The model returned no usable topic: ' + JSON.stringify(proposed.slice(0, 200)));
+  }
+  return topic;
 }
 
 function articleHtml({ title, description, category, readMinutes, bodyHtml, slug, iso, human, ch }) {

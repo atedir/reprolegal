@@ -29,6 +29,14 @@ jobs:
       - name: Add the publication date to the article and its card
         run: python3 scripts/backfill-dates.py
 
+      - name: Cross-link the articles
+        run: python3 scripts/link-articles.py
+
+      - name: Draw the share image
+        run: |
+          pip install --quiet pillow
+          python3 scripts/make-og.py
+
       - name: Structural check
         run: python3 scripts/check-pages.py
 
@@ -37,7 +45,7 @@ jobs:
         run: |
           git config user.name  "reprolegal-bot"
           git config user.email "bot@reprolegal.com"
-          git add blog blog.html sitemap.xml content/topics.txt
+          git add blog blog.html sitemap.xml content/topics.txt img/og
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
