@@ -86,7 +86,10 @@ h3{font-size:15px;letter-spacing:.14em}
   .brand .mk{width:28px;height:18px}
   .navr{gap:14px}
   .navr .cta{padding:9px 16px;letter-spacing:.14em}
+  .navr .cta-long{display:none}
+  .navr .cta-short{display:inline}
 }
+.navr .cta-short{display:none}
 @media(max-width:420px){
   .brand .tx{font-size:11px;letter-spacing:.14em}
   .brand .mk{width:24px;height:16px}
@@ -413,11 +416,6 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
 @media(max-width:1000px){.postgrid{grid-template-columns:repeat(2,1fr)}.factrow{grid-template-columns:1fr}}
 @media(max-width:760px){.postgrid{grid-template-columns:1fr}.pagehead{padding:110px 0 50px}}
 
-@media(max-width:520px){
-  .brand{gap:9px}
-  .brand .tx{font-size:12.5px;letter-spacing:.22em}
-  .brand .mk{width:27px;height:18px}
-}
 
 /* ---------- team carousel ---------- */
 .team{background:var(--cream)}
@@ -466,29 +464,6 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
 .langmenu a.on{color:var(--amber-dk)}
 @media(max-width:760px){.lang summary{padding:6px 9px;font-size:9.5px}}
 
-/* ---------- header at narrower widths ---------- */
-@media(max-width:1180px){ .navr .hide-m{display:none} .nav{gap:clamp(20px,4vw,48px)} }
-@media(max-width:900px){
-  .nav{gap:12px}
-  .brand{position:static;transform:none}
-  .brand .tx{font-size:13px;letter-spacing:.2em}
-  .brand .tx small{font-size:7.5px;letter-spacing:.22em}
-  .brand .mk{width:28px;height:18px}
-}
-@media(max-width:680px){
-  header{padding:11px 0}
-  .navr > a:last-child{padding:9px 16px;letter-spacing:.14em}
-  .navr .cta-long{display:none}
-  .navr .cta-short{display:inline}
-  .brand .tx small{display:none}
-}
-@media(max-width:420px){
-  .nav{gap:8px}
-  .brand .tx{font-size:11.5px;letter-spacing:.14em}
-  .brand .mk{width:24px;height:16px}
-  .lang summary{padding:5px 8px;font-size:9px;letter-spacing:.1em}
-}
-.navr .cta-short{display:none}
 
 /* country picker in the enquiry form */
 .contact select{font-family:var(--ui);font-size:15px;padding:14px 15px;border:1px solid var(--line2);
