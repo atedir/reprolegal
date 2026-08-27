@@ -44,6 +44,14 @@
   module('hero-headline', function () {
     var h = document.getElementById('heroH1');
     if (!h) return;                                 // <- the bug: this page simply has no hero
+    // On phones the per-word spans are atomic boxes and wrapping goes to pieces,
+    // so the whole headline fades in as one block instead.
+    if (window.matchMedia('(max-width:760px)').matches) {
+      h.style.opacity = 0;
+      h.style.transition = 'opacity .8s cubic-bezier(.22,.61,.36,1)';
+      setTimeout(function () { h.style.opacity = 1; }, reduce ? 0 : 200);
+      return;
+    }
     var words = h.textContent.trim().split(/\s+/);
     h.innerHTML = words.map(function (w) { return '<span class="word">' + w + '</span>'; }).join(' ');
     h.querySelectorAll('.word').forEach(function (s, i) {
