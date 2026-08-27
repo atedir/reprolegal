@@ -157,7 +157,7 @@ ${ch.foot}
 
 // Two or three links to sibling articles. Google walks a site by links, and an
 // article nothing points at gets almost no attention.
-async function furtherReading(currentSlug) {
+async function furtherReading(currentSlug, currentTitle, currentCat) {
   const files = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => []))
     .filter(f => f.endsWith('.html') && f !== currentSlug + '.html');
   if (!files.length) return '';
@@ -172,8 +172,21 @@ async function furtherReading(currentSlug) {
   }
   if (!items.length) return '';
 
-  // newest first, so the block stays fresh as the archive grows
-  items.sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+  // Relevance, not recency. Same category counts most, then words shared with
+  // this article's headline, then freshness as the tie-breaker.
+  const STOP = new Set(('a an the and or of for to in on at by with from what which who whom how why '
+    + 'is are was were be been do does did your you we our it its that this these those not no如 as '
+    + 'about before after when where explained country countries surrogacy').split(/\s+/));
+  const words = s => new Set(String(s).toLowerCase().match(/[a-z]{4,}/g) || []);
+  const mine = new Set([...words(currentTitle)].filter(w => !STOP.has(w)));
+
+  for (const it of items) {
+    const theirs = new Set([...words(it.title)].filter(w => !STOP.has(w)));
+    let shared = 0;
+    for (const w of mine) if (theirs.has(w)) shared++;
+    it.score = (it.cat && it.cat === currentCat ? 10 : 0) + shared * 3;
+  }
+  items.sort((a, b) => (b.score - a.score) || (b.iso || '').localeCompare(a.iso || ''));
   const picked = items.slice(0, 3);
 
   return `<h2>Further reading</h2>\n<ul>\n` +
@@ -223,7 +236,7 @@ const run = async () => {
 
   await fs.mkdir(path.join(ROOT, 'blog'), { recursive: true });
   const ch = await chrome();
-  post.bodyHtml += '\n' + await furtherReading(slug);
+  post.bodyHtml += '\n' + await furtherReading(slug, post.title, post.category);
   const html = articleHtml({ ...post, slug, iso, human, ch });
 
   // Sanity checks. A malformed article is worse than no article: an unclosed
