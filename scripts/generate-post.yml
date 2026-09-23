@@ -2,7 +2,7 @@ name: Generate SEO article
 
 on:
   schedule:
-    - cron: "0 7 */3 * *"   # every third day, 07:00 UTC — deliberately not daily
+    - cron: "0 7 * * 2"   # once a week, Tuesday 07:00 UTC — slow, steady cadence
   workflow_dispatch:
 
 permissions:
