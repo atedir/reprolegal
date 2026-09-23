@@ -485,3 +485,52 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
   background-size:5px 5px,5px 5px;background-repeat:no-repeat}
 .contact select:focus{outline:none;border-color:var(--ink)}
 .contact select:invalid{color:var(--ink3)}
+
+
+/* ---------- contact dock (built by site.js) ---------- */
+.cdock{position:fixed;right:24px;bottom:24px;z-index:85;font-family:var(--ui);
+  opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .3s,transform .3s,visibility .3s}
+.cdock.shown{opacity:1;visibility:visible;transform:none}
+.cdock-fab{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border:0;border-radius:999px;
+  padding:15px 22px;cursor:pointer;font-family:var(--disp);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  box-shadow:0 10px 30px rgba(39,35,32,.22);transition:background .25s}
+.cdock-fab:hover{background:#000}
+.cdock.open .cdock-fab{display:none}
+.cdock-panel{width:min(360px,calc(100vw - 32px));background:var(--paper);border:1px solid var(--line2);
+  box-shadow:0 18px 50px rgba(39,35,32,.18);padding:26px 24px 22px;position:relative}
+.cdock-panel[hidden]{display:none}
+.cdock.wide .cdock-panel{width:min(460px,calc(100vw - 32px));padding:14px 14px 0}
+.cdock-view[hidden]{display:none}
+.cdock-x{position:absolute;top:10px;right:12px;background:none;border:0;font-size:24px;line-height:1;color:var(--ink3);cursor:pointer;padding:4px 6px}
+.cdock-x:hover{color:var(--ink)}
+.cdock-who{display:flex;align-items:center;gap:14px;padding-right:24px}
+.cdock-who img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:50% 20%;background:var(--cream)}
+.cdock-who b{display:block;font-weight:500;font-size:15px;line-height:1.3}
+.cdock-who small{display:block;font-size:12.5px;line-height:1.45;color:var(--ink3)}
+.cdock-title{font-family:var(--disp);font-weight:300;font-size:18px;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 14px}
+.cdock-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;margin-top:8px;border:1px solid var(--line2);
+  font-size:14.5px;color:var(--ink);transition:border-color .25s,background .25s}
+.cdock-btn:hover{border-color:var(--ink)}
+.cdock-btn svg{flex:0 0 auto;color:var(--amber-dk)}
+.cdock-btn.cdock-wa{background:var(--ink);border-color:var(--ink);color:#fff}
+.cdock-btn.cdock-wa svg{color:#fff}
+.cdock-btn.cdock-wa:hover{background:#000}
+.cdock-more{display:inline-block;margin-top:16px;font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-dk)}
+.cdock-calhead{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px}
+.cdock-calhead .cdock-x{position:static}
+.cdock-back{background:none;border:0;cursor:pointer;font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
+.cdock-calview iframe{display:block;width:100%;height:min(600px,calc(100vh - 210px));border:0}
+.cdock-bar{display:none}
+@media(max-width:760px){
+  .cdock{left:0;right:0;bottom:0}
+  .cdock-fab{display:none}
+  .cdock-bar{display:grid;grid-template-columns:1fr 1fr;background:var(--paper);border-top:1px solid var(--line2);
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));gap:10px}
+  .cdock-bar a{display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 10px;border:1px solid var(--line2);
+    border-radius:999px;font-family:var(--disp);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .cdock-bar a.cdock-wa{background:var(--ink);border-color:var(--ink);color:#fff}
+  .cdock-panel{position:fixed;left:0;right:0;bottom:0;width:auto;border-width:1px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+  .cdock.open .cdock-bar{display:none}
+  html.has-cbar body{padding-bottom:72px}
+}
+@media print{.cdock{display:none}}
