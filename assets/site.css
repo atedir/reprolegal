@@ -423,6 +423,11 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
 .views{font-family:var(--disp);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
 .pill{font-family:var(--disp);font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;padding:6px 13px;border-radius:999px;white-space:nowrap}
 .pill.st-ok{background:#EDF2E6;color:#4A6B45}.pill.st-mid{background:#FAF2E2;color:#8A6218}.pill.st-no{background:#FAECE8;color:#9B4A36}
+.pager{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin-top:64px;font-family:var(--disp);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.pager a,.pager span{min-width:42px;height:42px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line2);border-radius:999px;color:var(--ink);transition:border-color .25s,background .25s}
+.pager a:hover{border-color:var(--ink)}
+.pager [aria-current]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pager .pg-step{color:var(--amber-dk)}
 @media(max-width:1000px){.postgrid{grid-template-columns:repeat(2,1fr)}.factrow{grid-template-columns:1fr}}
 @media(max-width:760px){.postgrid{grid-template-columns:1fr}.pagehead{padding:110px 0 50px}}
 

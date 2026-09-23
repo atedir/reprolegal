@@ -12,7 +12,8 @@ how-it-works.html     five stages
 programmes.html       programme types
 faq.html              FAQPage schema
 stories.html          reviews (consent required)
-blog.html             journal index, cards injected at <!-- POSTS -->
+blog.html             journal page 1, cards injected at <!-- POSTS -->
+blog/page/N.html      journal pages 2+, six cards each (scripts/paginate-blog.py)
 blog/*.html           articles (generated)
 assets/site.css       one stylesheet for every page
 assets/site.js        header, drawer, scroll reveals, counters, view counter
