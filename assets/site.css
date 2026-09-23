@@ -277,8 +277,10 @@ section{padding:130px 0}
 
 /* stories */
 .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
-.tcard blockquote{font-family:var(--disp);font-weight:300;font-size:19px;line-height:1.6}
-.tcard .who{font-family:var(--disp);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-top:22px}
+.tcard{display:flex;flex-direction:column}
+.tcard blockquote{font-family:var(--disp);font-weight:300;font-size:19px;line-height:1.6;flex:1}
+/* signatures sit on one line across the row, however long each quote runs */
+.tcard .who{font-family:var(--disp);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
 
 details{border-bottom:1px solid var(--line)}
 details summary{font-family:var(--disp);font-weight:300;font-size:15px;letter-spacing:.1em;text-transform:uppercase;padding:26px 40px 26px 0;cursor:pointer;list-style:none;position:relative}
