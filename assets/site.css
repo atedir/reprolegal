@@ -459,12 +459,12 @@ footer{background:var(--ink);color:rgba(255,255,255,.62);padding:60px 0 34px;fon
 @media(max-width:520px){.tperson{flex:0 0 76%}}
 
 /* ---------- language switcher ---------- */
-.lang{position:relative}
+.lang{position:relative;border-bottom:0}
 .lang summary{list-style:none;display:block;cursor:pointer;font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;
   text-transform:uppercase;padding:7px 12px;border:1px solid rgba(140,130,120,.4);border-radius:999px;color:inherit}
 .lang summary::-webkit-details-marker{display:none}
 .lang summary::marker{content:"";font-size:0}
-.lang summary::after{display:none}
+.lang summary::before,.lang summary::after{display:none}
 .lang summary:hover{border-color:currentColor}
 .langmenu{position:absolute;right:0;top:calc(100% + 8px);background:var(--paper);border:1px solid var(--line2);
   min-width:172px;box-shadow:0 22px 48px -30px rgba(39,35,32,.55);z-index:60;padding:6px 0}
