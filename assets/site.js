@@ -23,7 +23,8 @@
     if (!hdr) return;
     if (hdr.classList.contains('solid')) return;   // inner pages are solid from the start
     var onScroll = function () {
-      hdr.classList.toggle('solid', window.scrollY > window.innerHeight * 0.75);
+      // solid as soon as the page moves, so hero copy never slides under a see-through bar
+      hdr.classList.toggle('solid', window.scrollY > 8);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
