@@ -37,6 +37,10 @@
     if (!drawer || !burger) return;
     burger.addEventListener('click', function () { drawer.classList.add('open'); });
     if (close) close.addEventListener('click', function () { drawer.classList.remove('open'); });
+    // an anchor on the current page (/#contact) does not reload it, so shut the drawer ourselves
+    drawer.addEventListener('click', function (e) {
+      if (e.target.closest('a')) drawer.classList.remove('open');
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') drawer.classList.remove('open');
     });
