@@ -43,9 +43,13 @@ jobs:
           pip install --quiet pillow
           python3 scripts/make-og.py
 
+      - name: One header on every page
+        run: python3 scripts/sync-header.py
+
       - name: Structural check
         run: |
           python3 scripts/check-pages.py
+          python3 scripts/sync-header.py --check
           python3 scripts/check-css.py
 
       - name: Commit
