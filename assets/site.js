@@ -319,9 +319,21 @@
 
   module('view-counter', function () {
     // the word after the count, in the page's language
-    var WORD = { en: 'reads', uk: 'прочитань', de: 'Aufrufe', fr: 'lectures', es: 'lecturas', it: 'letture' };
-    var lang = document.documentElement.lang || 'en';
-    var reads = function (n) { return n.toLocaleString(lang === 'en' ? 'en-US' : lang) + ' ' + (WORD[lang] || WORD.en); };
+    // one/few/many forms, picked by the language's own plural rules
+    var WORD = {
+      en: { one: 'read', other: 'reads' },
+      uk: { one: 'прочитання', few: 'прочитання', many: 'прочитань', other: 'прочитання' },
+      de: { one: 'Aufruf', other: 'Aufrufe' },
+      fr: { one: 'lecture', other: 'lectures' },
+      es: { one: 'lectura', other: 'lecturas' },
+      it: { one: 'lettura', other: 'letture' }
+    };
+    var lang = WORD[document.documentElement.lang] ? document.documentElement.lang : 'en';
+    var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(lang) : { select: function (n) { return n === 1 ? 'one' : 'other'; } };
+    var reads = function (n) {
+      var w = WORD[lang];
+      return n.toLocaleString(lang === 'en' ? 'en-US' : lang) + ' ' + (w[plural.select(n)] || w.other);
+    };
 
     // article pages: increment and show
     var el = document.getElementById('views');
