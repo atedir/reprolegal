@@ -29,17 +29,47 @@
 <link rel="stylesheet" href="/assets/site.css" />
 
 <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PKVPH96L');</script>
+<script>
+/* Consent first. Google Consent Mode v2 starts with everything denied, and GTM itself is
+   only loaded once the visitor has accepted analytics or advertising (the banner lives in
+   assets/site.js, module "consent"). Until then no request goes to Google at all. */
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
+  analytics_storage:'denied', functionality_storage:'granted', security_storage:'granted'});
+window.rlLoadGTM = function () {
+  if (window.rlGTM) return; window.rlGTM = 1;
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PKVPH96L');
+};
+(function () {
+  try {
+    var c = JSON.parse(localStorage.getItem('rl-consent') || 'null');
+    if (c && c.v === 1 && Date.now() - c.t < 31536e6) {
+      if (!(c.a || c.m)) return;
+      gtag('consent', 'update', {analytics_storage: c.a ? 'granted' : 'denied', ad_storage: c.m ? 'granted' : 'denied',
+        ad_user_data: c.m ? 'granted' : 'denied', ad_personalization: c.m ? 'granted' : 'denied'});
+      window.rlLoadGTM();
+      return;
+    }
+    /* no choice yet: remember how this tab arrived (campaign tags, click ids, external referrer),
+       so a visitor who accepts a few pages later is still attributed to the right source */
+    if (!sessionStorage.getItem('rl-landing')) {
+      var keep = location.search.slice(1).split('&').filter(function (p) {
+        return /^(utm_[a-z]+|gclid|gbraid|wbraid|dclid|fbclid|msclkid)=/.test(p); }).join('&');
+      var ref = document.referrer && document.referrer.indexOf(location.origin) !== 0 ? document.referrer : '';
+      sessionStorage.setItem('rl-landing', JSON.stringify({q: keep, r: ref}));
+    }
+  } catch (e) {}
+})();
+</script>
 <!-- End Google Tag Manager -->
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PKVPH96L"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <header id="hdr" class="solid">
@@ -68,7 +98,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="/fr/#contact">Contact</a>
   </nav>
 </div>
-<div class="pagehead"><div class="wrap"><div class="crumbs"><a href="/fr/">Accueil</a> · Cookie policy</div><h1>Cookie policy</h1></div></div><section style="padding:70px 0"><div class="wrap"><div class="prose"><p>[Placeholder — list every cookie set, its purpose, provider and lifetime. Analytics must not load before consent for EU visitors; the consent banner has to offer a genuine reject option that is as easy as accept.]</p></div></div></section><section style="background:var(--cream);border-bottom:0;text-align:center;padding:110px 0">
+<div class="pagehead"><div class="wrap"><div class="crumbs"><a href="/fr/">Accueil</a> · Cookie policy</div><h1>Cookie policy</h1></div></div><section style="padding:70px 0"><div class="wrap"><div class="prose">
+<div class="factbox"><div class="k">Before launch</div>This policy describes how the site is built. The list of analytics and advertising cookies below must match what is actually published in our Google Tag Manager container, and should be reviewed by a data-protection lawyer.</div>
+<p>This page explains what reprolegal.com stores in your browser, why, and for how long. The controller is <b>Medical consulting solutions s.r.o.</b>, reachable at <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>; the <a href="/fr/privacy">privacy policy</a> covers everything else we do with personal data.</p>
+<h2>Your choice comes first</h2>
+<p>When you first arrive, a banner asks whether you accept analytics, advertising, both or neither. Until you answer, and for as long as you refuse, nothing from Google or any other analytics or advertising provider is loaded: not a script, not a cookie, not a request. Rejecting is one click, the same as accepting, and the site works exactly the same either way.</p>
+<p>You can change your mind at any time with <a href="#" data-cookie-settings>Cookie settings</a>, also linked at the bottom of every page. If you withdraw consent we delete the analytics and advertising cookies we can reach and stop loading the tags.</p>
+<h2>Necessary — always on</h2>
+<ul>
+  <li><b>rl-consent</b> (your browser’s local storage, 12 months) — remembers your choice so the banner does not ask on every page. After 12 months we ask again.</li>
+  <li><b>rl-landing</b> (session storage, until you close the tab) — the campaign tags of the page you arrived on (for example utm_source or a Google Ads click id) and the site that sent you. It never leaves your browser unless you accept analytics or advertising, and exists only so that a visit is credited to the right source if you accept on a later page.</li>
+  <li><b>__cf_bm</b> (Cloudflare, 30 minutes) — may be set by our hosting provider to tell people from bots. It contains no identifier we can read.</li>
+</ul>
+<h2>Analytics — only if you accept</h2>
+<ul>
+  <li><b>_ga</b> and <b>_ga_&lt;container id&gt;</b> (Google Analytics 4, Google Ireland Ltd, up to 2 years) — count visits and page views and tell a returning visitor from a new one. We use this to see which pages help and which do not.</li>
+</ul>
+<h2>Advertising — only if you accept</h2>
+<ul>
+  <li><b>_gcl_au</b> and related <b>_gcl_*</b> cookies (Google Ads, Google Ireland Ltd, up to 90 days) — measure whether someone who clicked one of our ads later got in touch, and let us show our ads again to people who have visited.</li>
+</ul>
+<p>We never send the contents of the enquiry form, your situation or your country of residence to analytics or advertising providers.</p>
+<h2>Google Consent Mode</h2>
+<p>We use Google Consent Mode v2 with every category denied by default. Your choice is passed to Google as analytics_storage, ad_storage, ad_user_data and ad_personalization; nothing is granted that you did not accept.</p>
+<h2>Questions</h2>
+<p>Write to <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>. You can also delete everything described here by clearing this site’s data in your browser.</p>
+</div></div></section><section style="background:var(--cream);border-bottom:0;text-align:center;padding:110px 0">
   <div class="wrap">
     <h2 class="reveal">Prêts à commencer ?</h2>
     <p class="reveal" style="--d:.1s;color:var(--ink2);max-width:52ch;margin:22px auto 38px">Un appel de 30 minutes, sans présentation et sans pression. Si votre pays complique ce parcours, vous le saurez d'abord.</p>

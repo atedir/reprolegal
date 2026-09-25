@@ -38,17 +38,47 @@
 "mainEntityOfPage":"https://reprolegal.com/ua/blog/how-to-verify-a-surrogacy-or-ivf-agency-a-checklist"}
 </script>
 <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PKVPH96L');</script>
+<script>
+/* Consent first. Google Consent Mode v2 starts with everything denied, and GTM itself is
+   only loaded once the visitor has accepted analytics or advertising (the banner lives in
+   assets/site.js, module "consent"). Until then no request goes to Google at all. */
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
+  analytics_storage:'denied', functionality_storage:'granted', security_storage:'granted'});
+window.rlLoadGTM = function () {
+  if (window.rlGTM) return; window.rlGTM = 1;
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PKVPH96L');
+};
+(function () {
+  try {
+    var c = JSON.parse(localStorage.getItem('rl-consent') || 'null');
+    if (c && c.v === 1 && Date.now() - c.t < 31536e6) {
+      if (!(c.a || c.m)) return;
+      gtag('consent', 'update', {analytics_storage: c.a ? 'granted' : 'denied', ad_storage: c.m ? 'granted' : 'denied',
+        ad_user_data: c.m ? 'granted' : 'denied', ad_personalization: c.m ? 'granted' : 'denied'});
+      window.rlLoadGTM();
+      return;
+    }
+    /* no choice yet: remember how this tab arrived (campaign tags, click ids, external referrer),
+       so a visitor who accepts a few pages later is still attributed to the right source */
+    if (!sessionStorage.getItem('rl-landing')) {
+      var keep = location.search.slice(1).split('&').filter(function (p) {
+        return /^(utm_[a-z]+|gclid|gbraid|wbraid|dclid|fbclid|msclkid)=/.test(p); }).join('&');
+      var ref = document.referrer && document.referrer.indexOf(location.origin) !== 0 ? document.referrer : '';
+      sessionStorage.setItem('rl-landing', JSON.stringify({q: keep, r: ref}));
+    }
+  } catch (e) {}
+})();
+</script>
 <!-- End Google Tag Manager -->
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PKVPH96L"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <header id="hdr" class="solid">
   <div class="wrap nav">

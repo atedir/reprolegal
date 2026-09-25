@@ -17,6 +17,9 @@ for f in pages:
         o = len(re.findall(r'<%s[\s>]' % tag, s))
         c = len(re.findall(r'</%s>' % tag, s))
         if o != c: problems.append('%s: %d open vs %d closed' % (tag, o, c))
+    # Google Tag Manager may only load through the consent loader, never unconditionally
+    if 'googletagmanager.com' in s and ('ns.html?id=' in s or 'window.rlLoadGTM' not in s):
+        problems.append('Google Tag Manager loads without waiting for consent')
     if not s.rstrip().endswith('</html>'):
         problems.append('does not end with </html>')
     if problems:

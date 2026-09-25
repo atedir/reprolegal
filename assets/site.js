@@ -361,4 +361,147 @@
       })
       .catch(function () {});
   });
+  module('consent', function () {
+    // Cookie banner for Google Consent Mode v2. Nothing from Google loads until the visitor
+    // accepts (see the loader in each page's <head>); a refusal is remembered and GTM never loads.
+    var KEY = 'rl-consent', YEAR = 31536e6;
+    var TXT = {
+      en: { title: 'Cookies', body: 'We use analytics to see which pages help, and — only if you allow it — advertising cookies to show our ads to people who have visited. Nothing is set until you choose, and you can change your mind any time under Cookie settings.',
+            policy: 'Cookie policy', reject: 'Reject all', settings: 'Settings', accept: 'Accept all', save: 'Save choices',
+            nec: 'Necessary', necD: 'Remembers this choice. Always on.', an: 'Analytics', anD: 'Visits and page views, via Google Analytics.',
+            ad: 'Advertising', adD: 'Measuring and showing our ads, via advertising platforms such as Google Ads.', footer: 'Cookie settings' },
+      uk: { title: 'Cookie-файли', body: 'Ми використовуємо аналітику, щоб бачити, які сторінки корисні, і — лише з вашого дозволу — рекламні cookie, щоб показувати нашу рекламу тим, хто вже був на сайті. Нічого не встановлюється, доки ви не оберете, а змінити вибір можна будь-коли в «Налаштуваннях cookie».',
+            policy: 'Політика cookie', reject: 'Відхилити все', settings: 'Налаштування', accept: 'Прийняти все', save: 'Зберегти вибір',
+            nec: 'Необхідні', necD: 'Запам’ятовують цей вибір. Завжди увімкнені.', an: 'Аналітика', anD: 'Відвідування та перегляди сторінок, через Google Analytics.',
+            ad: 'Реклама', adD: 'Вимірювання та показ нашої реклами, через рекламні платформи, як-от Google Ads.', footer: 'Налаштування cookie' },
+      de: { title: 'Cookies', body: 'Wir nutzen Analyse-Cookies, um zu sehen, welche Seiten hilfreich sind, und – nur mit Ihrer Erlaubnis – Werbe-Cookies, um unsere Anzeigen Menschen zu zeigen, die uns bereits besucht haben. Nichts wird gesetzt, bevor Sie wählen, und Sie können Ihre Wahl jederzeit unter „Cookie-Einstellungen“ ändern.',
+            policy: 'Cookie-Richtlinie', reject: 'Alle ablehnen', settings: 'Einstellungen', accept: 'Alle akzeptieren', save: 'Auswahl speichern',
+            nec: 'Notwendig', necD: 'Speichert diese Auswahl. Immer aktiv.', an: 'Analyse', anD: 'Besuche und Seitenaufrufe, über Google Analytics.',
+            ad: 'Werbung', adD: 'Messung und Ausspielung unserer Anzeigen, über Werbeplattformen wie Google Ads.', footer: 'Cookie-Einstellungen' },
+      fr: { title: 'Cookies', body: 'Nous utilisons des cookies de mesure d’audience pour savoir quelles pages sont utiles et, uniquement avec votre accord, des cookies publicitaires pour montrer nos annonces aux personnes qui nous ont déjà rendu visite. Rien n’est déposé avant votre choix, et vous pouvez le modifier à tout moment dans « Paramètres des cookies ».',
+            policy: 'Politique relative aux cookies', reject: 'Tout refuser', settings: 'Paramètres', accept: 'Tout accepter', save: 'Enregistrer mes choix',
+            nec: 'Nécessaires', necD: 'Mémorisent ce choix. Toujours actifs.', an: 'Mesure d’audience', anD: 'Visites et pages vues, via Google Analytics.',
+            ad: 'Publicité', adD: 'Mesure et diffusion de nos annonces, via des plateformes publicitaires comme Google Ads.', footer: 'Paramètres des cookies' },
+      es: { title: 'Cookies', body: 'Usamos cookies analíticas para saber qué páginas resultan útiles y, solo si usted lo permite, cookies publicitarias para mostrar nuestros anuncios a quienes ya nos han visitado. No se instala nada hasta que usted elija, y puede cambiarlo en cualquier momento en «Configuración de cookies».',
+            policy: 'Política de cookies', reject: 'Rechazar todo', settings: 'Configuración', accept: 'Aceptar todo', save: 'Guardar selección',
+            nec: 'Necesarias', necD: 'Recuerdan esta elección. Siempre activas.', an: 'Analíticas', anD: 'Visitas y páginas vistas, mediante Google Analytics.',
+            ad: 'Publicidad', adD: 'Medición y publicación de nuestros anuncios, mediante plataformas publicitarias como Google Ads.', footer: 'Configuración de cookies' },
+      it: { title: 'Cookie', body: 'Usiamo cookie analitici per capire quali pagine sono utili e, solo se lo consenti, cookie pubblicitari per mostrare i nostri annunci a chi ci ha già visitato. Non viene impostato nulla finché non scegli, e puoi cambiare idea in qualsiasi momento da «Impostazioni cookie».',
+            policy: 'Cookie policy', reject: 'Rifiuta tutto', settings: 'Impostazioni', accept: 'Accetta tutto', save: 'Salva le scelte',
+            nec: 'Necessari', necD: 'Ricordano questa scelta. Sempre attivi.', an: 'Analitici', anD: 'Visite e pagine viste, tramite Google Analytics.',
+            ad: 'Pubblicità', adD: 'Misurazione e pubblicazione dei nostri annunci, tramite piattaforme pubblicitarie come Google Ads.', footer: 'Impostazioni cookie' }
+    };
+    var FOLDER = { en: '', uk: '/ua', de: '/de', fr: '/fr', es: '/es', it: '/it' };
+    var lang = TXT[document.documentElement.lang] ? document.documentElement.lang : 'en';
+    var t = TXT[lang];
+
+    function read() {
+      try {
+        var c = JSON.parse(localStorage.getItem(KEY) || 'null');
+        return c && c.v === 1 && Date.now() - c.t < YEAR ? c : null;
+      } catch (e) { return null; }
+    }
+
+    // put back the campaign tags and outside referrer this tab arrived with, so a visitor
+    // who accepts on a later page is still attributed to the campaign that brought them
+    function restoreLanding() {
+      var land;
+      try { land = JSON.parse(sessionStorage.getItem('rl-landing') || 'null'); } catch (e) {}
+      if (!land) return;
+      if (land.q && !/[?&](utm_|gclid=|gbraid=|wbraid=|fbclid=|msclkid=)/.test(location.search)) {
+        var q = location.search ? location.search + '&' + land.q : '?' + land.q;
+        history.replaceState(history.state, '', location.pathname + q + location.hash);
+      }
+      if (land.r && window.gtag) gtag('set', { page_referrer: land.r });
+    }
+
+    function clearGoogleCookies() {
+      document.cookie.split(';').forEach(function (c) {
+        var name = c.split('=')[0].trim();
+        if (!/^(_ga|_gid|_gat|_gcl|_fbp|_fbc)/.test(name)) return;
+        var host = location.hostname, parts = host.split('.');
+        [host, '.' + host, '.' + parts.slice(-2).join('.')].forEach(function (d) {
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + d;
+        });
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      });
+    }
+
+    function decide(a, m) {
+      var before = read();
+      try { localStorage.setItem(KEY, JSON.stringify({ v: 1, t: Date.now(), a: !!a, m: !!m })); } catch (e) {}
+      if (window.gtag) gtag('consent', 'update', {
+        analytics_storage: a ? 'granted' : 'denied', ad_storage: m ? 'granted' : 'denied',
+        ad_user_data: m ? 'granted' : 'denied', ad_personalization: m ? 'granted' : 'denied' });
+      close();
+      if (a || m) {
+        if (!window.rlGTM) restoreLanding();
+        window.dataLayer.push({ event: 'consent_update', consent_analytics: !!a, consent_ads: !!m });
+        if (window.rlLoadGTM) window.rlLoadGTM();
+      }
+      // a withdrawal: drop what was set, and reload so the Google scripts already on the page stop
+      if (before && ((before.a && !a) || (before.m && !m))) { clearGoogleCookies(); location.reload(); }
+    }
+
+    var box;
+    function close() { if (box) { box.remove(); box = null; } document.documentElement.classList.remove('cc-open'); }
+
+    function open(withSettings) {
+      close();
+      var c = read() || { a: false, m: false };
+      box = document.createElement('div');
+      box.className = 'cc';
+      box.setAttribute('role', 'dialog');
+      box.setAttribute('aria-labelledby', 'cc-title');
+      box.innerHTML =
+        '<div class="cc-title" id="cc-title">' + t.title + '</div>' +
+        '<p class="cc-body">' + t.body + ' <a href="' + FOLDER[lang] + '/cookies">' + t.policy + '</a></p>' +
+        '<div class="cc-prefs" hidden>' +
+          '<label class="cc-row"><span><b>' + t.nec + '</b><small>' + t.necD + '</small></span><input type="checkbox" checked disabled></label>' +
+          '<label class="cc-row"><span><b>' + t.an + '</b><small>' + t.anD + '</small></span><input type="checkbox" name="a"' + (c.a ? ' checked' : '') + '></label>' +
+          '<label class="cc-row"><span><b>' + t.ad + '</b><small>' + t.adD + '</small></span><input type="checkbox" name="m"' + (c.m ? ' checked' : '') + '></label>' +
+        '</div>' +
+        '<div class="cc-actions">' +
+          '<button type="button" class="cc-btn" data-cc="reject">' + t.reject + '</button>' +
+          '<button type="button" class="cc-btn" data-cc="settings">' + t.settings + '</button>' +
+          '<button type="button" class="cc-btn" data-cc="save" hidden>' + t.save + '</button>' +
+          '<button type="button" class="cc-btn" data-cc="accept">' + t.accept + '</button>' +
+        '</div>';
+      document.body.appendChild(box);
+      document.documentElement.classList.add('cc-open');
+      var prefs = box.querySelector('.cc-prefs');
+      var showPrefs = function () {
+        prefs.hidden = false;
+        box.querySelector('[data-cc="settings"]').hidden = true;
+        box.querySelector('[data-cc="save"]').hidden = false;
+      };
+      if (withSettings) showPrefs();
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-cc]');
+        if (!b) return;
+        var act = b.getAttribute('data-cc');
+        if (act === 'accept') decide(true, true);
+        else if (act === 'reject') decide(false, false);
+        else if (act === 'settings') showPrefs();
+        else if (act === 'save') decide(box.querySelector('[name="a"]').checked, box.querySelector('[name="m"]').checked);
+      });
+      box.querySelector('[data-cc="accept"]').focus({ preventScroll: true });
+    }
+
+    // a way back to the choice from every page, next to the legal links in the footer
+    var fbot = document.querySelector('.fbot');
+    if (fbot) {
+      var link = document.createElement('button');
+      link.type = 'button';
+      link.className = 'cc-reopen';
+      link.textContent = t.footer;
+      link.addEventListener('click', function () { open(true); });
+      fbot.appendChild(link);
+    }
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-cookie-settings]')) { e.preventDefault(); open(true); }
+    });
+
+    if (!read()) open(false);
+  });
 })();
