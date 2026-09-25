@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validates the stylesheet structurally: balanced comments and braces, and no
-   stray text outside a rule — the failure that silently kills every rule after it.
+   stray text outside a rule — the failure that silently kills every rule after it —
+   and no class with two top-level base rules.
        python3 scripts/check-css.py
 """
 import re, sys
@@ -24,6 +25,16 @@ for i, line in enumerate(stripped.split('\n'), 1):
     depth += t.count('{') - t.count('}')
 if depth != 0:
     problems.append('nesting does not close: depth %d at end of file' % depth)
+
+# the same class given a base rule twice at the top level almost always means two
+# components picked the same name (the cookie banner once took the country cards' .cc)
+seen = {}
+for m in re.finditer(r'^(\.[A-Za-z0-9_-]+)\{', stripped, re.M):
+    line = stripped.count('\n', 0, m.start()) + 1
+    if m.group(1) in seen:
+        problems.append('line %d: %s already has a top-level rule at line %d — two components sharing a class name?'
+                        % (line, m.group(1), seen[m.group(1)]))
+    seen.setdefault(m.group(1), line)
 
 for p in problems:
     print('FAIL', p)

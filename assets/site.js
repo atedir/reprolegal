@@ -444,48 +444,48 @@
     }
 
     var box;
-    function close() { if (box) { box.remove(); box = null; } document.documentElement.classList.remove('cc-open'); }
+    function close() { if (box) { box.remove(); box = null; } document.documentElement.classList.remove('rlc-open'); }
 
     function open(withSettings) {
       close();
       var c = read() || { a: false, m: false };
       box = document.createElement('div');
-      box.className = 'cc';
+      box.className = 'rlc';
       box.setAttribute('role', 'dialog');
-      box.setAttribute('aria-labelledby', 'cc-title');
+      box.setAttribute('aria-labelledby', 'rlc-title');
       box.innerHTML =
-        '<div class="cc-title" id="cc-title">' + t.title + '</div>' +
-        '<p class="cc-body">' + t.body + ' <a href="' + FOLDER[lang] + '/cookies">' + t.policy + '</a></p>' +
-        '<div class="cc-prefs" hidden>' +
-          '<label class="cc-row"><span><b>' + t.nec + '</b><small>' + t.necD + '</small></span><input type="checkbox" checked disabled></label>' +
-          '<label class="cc-row"><span><b>' + t.an + '</b><small>' + t.anD + '</small></span><input type="checkbox" name="a"' + (c.a ? ' checked' : '') + '></label>' +
-          '<label class="cc-row"><span><b>' + t.ad + '</b><small>' + t.adD + '</small></span><input type="checkbox" name="m"' + (c.m ? ' checked' : '') + '></label>' +
+        '<div class="rlc-title" id="rlc-title">' + t.title + '</div>' +
+        '<p class="rlc-body">' + t.body + ' <a href="' + FOLDER[lang] + '/cookies">' + t.policy + '</a></p>' +
+        '<div class="rlc-prefs" hidden>' +
+          '<label class="rlc-row"><span><b>' + t.nec + '</b><small>' + t.necD + '</small></span><input type="checkbox" checked disabled></label>' +
+          '<label class="rlc-row"><span><b>' + t.an + '</b><small>' + t.anD + '</small></span><input type="checkbox" name="a"' + (c.a ? ' checked' : '') + '></label>' +
+          '<label class="rlc-row"><span><b>' + t.ad + '</b><small>' + t.adD + '</small></span><input type="checkbox" name="m"' + (c.m ? ' checked' : '') + '></label>' +
         '</div>' +
-        '<div class="cc-actions">' +
-          '<button type="button" class="cc-btn" data-cc="reject">' + t.reject + '</button>' +
-          '<button type="button" class="cc-btn" data-cc="settings">' + t.settings + '</button>' +
-          '<button type="button" class="cc-btn" data-cc="save" hidden>' + t.save + '</button>' +
-          '<button type="button" class="cc-btn" data-cc="accept">' + t.accept + '</button>' +
+        '<div class="rlc-actions">' +
+          '<button type="button" class="rlc-btn" data-rlc="reject">' + t.reject + '</button>' +
+          '<button type="button" class="rlc-btn" data-rlc="settings">' + t.settings + '</button>' +
+          '<button type="button" class="rlc-btn" data-rlc="save" hidden>' + t.save + '</button>' +
+          '<button type="button" class="rlc-btn" data-rlc="accept">' + t.accept + '</button>' +
         '</div>';
       document.body.appendChild(box);
-      document.documentElement.classList.add('cc-open');
-      var prefs = box.querySelector('.cc-prefs');
+      document.documentElement.classList.add('rlc-open');
+      var prefs = box.querySelector('.rlc-prefs');
       var showPrefs = function () {
         prefs.hidden = false;
-        box.querySelector('[data-cc="settings"]').hidden = true;
-        box.querySelector('[data-cc="save"]').hidden = false;
+        box.querySelector('[data-rlc="settings"]').hidden = true;
+        box.querySelector('[data-rlc="save"]').hidden = false;
       };
       if (withSettings) showPrefs();
       box.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-cc]');
+        var b = e.target.closest('[data-rlc]');
         if (!b) return;
-        var act = b.getAttribute('data-cc');
+        var act = b.getAttribute('data-rlc');
         if (act === 'accept') decide(true, true);
         else if (act === 'reject') decide(false, false);
         else if (act === 'settings') showPrefs();
         else if (act === 'save') decide(box.querySelector('[name="a"]').checked, box.querySelector('[name="m"]').checked);
       });
-      box.querySelector('[data-cc="accept"]').focus({ preventScroll: true });
+      box.querySelector('[data-rlc="accept"]').focus({ preventScroll: true });
     }
 
     // a way back to the choice from every page, next to the legal links in the footer
@@ -493,7 +493,7 @@
     if (fbot) {
       var link = document.createElement('button');
       link.type = 'button';
-      link.className = 'cc-reopen';
+      link.className = 'rlc-reopen';
       link.textContent = t.footer;
       link.addEventListener('click', function () { open(true); });
       fbot.appendChild(link);
