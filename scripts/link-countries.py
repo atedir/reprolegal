@@ -7,6 +7,7 @@
    they share with the page's own facts (birth certificate, court step, exit…) and
    evergreen category, and spread out so neighbouring pages do not list the same three.
    Recency is the tie-breaker.
+   Translated pages link to the article in their own language once it exists.
    Idempotent — rewrites the block between its markers instead of stacking copies.
        python3 scripts/link-countries.py
 """
@@ -84,10 +85,17 @@ for code, folder in LANGS.items():
         if not os.path.exists(f): continue
         s = open(f, encoding='utf-8').read()
         s = re.sub(r'\n[ \t]*' + re.escape(START) + r'.*?' + re.escape(END), '', s, flags=re.S)
-        note = '' if code == 'en' else '<p>%s</p>' % tr('Articles in English.')
-        lang = '' if code == 'en' else ' hreflang="en"'
-        block = [START, '<h2>%s</h2>' % tr('From the journal')] + ([note] if note else []) + ['<ul>'] + [
-            '  <li><a href="/blog/%s"%s>%s</a></li>' % (a['slug'], lang, a['title']) for a in picks[d['slug']]] + ['</ul>', END]
+        items, english = [], False
+        for a in picks[d['slug']]:
+            local = os.path.join(folder, 'blog', a['slug'] + '.html')
+            if folder and os.path.exists(local):
+                title = re.search(r'<title>(.*?)\s*\|', open(local, encoding='utf-8').read(), re.S).group(1).strip()
+                items.append('  <li><a href="/%s/blog/%s">%s</a></li>' % (folder, a['slug'], title))
+            else:   # not translated yet: the English article, marked as such
+                english = english or bool(folder)
+                items.append('  <li><a href="/blog/%s"%s>%s</a></li>' % (a['slug'], ' hreflang="en"' if folder else '', a['title']))
+        note = ['<p>%s</p>' % tr('Articles in English.')] if english else []
+        block = [START, '<h2>%s</h2>' % tr('From the journal')] + note + ['<ul>'] + items + ['</ul>', END]
         m = re.search(r'\n([ \t]*)<h2>%s</h2>' % re.escape(tr('Other destinations')), s)
         if not m:
             print('  ! no "Other destinations" heading in %s, skipped' % f); continue

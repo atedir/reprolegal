@@ -29,7 +29,12 @@ jobs:
       - name: Add the publication date to the article and its card
         run: python3 scripts/backfill-dates.py
 
-      - name: Split the journal into pages of six
+      - name: Translate it into every site language
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/translate-posts.mjs
+
+      - name: List the journal in every language, six articles a page
         run: python3 scripts/paginate-blog.py
 
       - name: Cross-link the articles
@@ -46,6 +51,9 @@ jobs:
       - name: One header on every page
         run: python3 scripts/sync-header.py
 
+      - name: Language alternates and sitemap
+        run: python3 scripts/build-alternates.py
+
       - name: Structural check
         run: |
           python3 scripts/check-pages.py
@@ -57,7 +65,7 @@ jobs:
         run: |
           git config user.name  "reprolegal-bot"
           git config user.email "bot@reprolegal.com"
-          git add blog blog.html sitemap.xml content/topics.txt img/og countries ua/countries de/countries fr/countries es/countries it/countries
+          git add blog blog.html sitemap.xml content/topics.txt img/og countries ua de fr es it
           if git diff --staged --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else

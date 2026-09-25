@@ -12,9 +12,11 @@ how-it-works.html     five stages
 programmes.html       programme types
 faq.html              FAQPage schema
 stories.html          reviews (consent required)
-blog.html             journal page 1, cards injected at <!-- POSTS -->
-blog/page/N.html      journal pages 2+, six cards each (scripts/paginate-blog.py)
-blog/*.html           articles (generated)
+blog.html             journal page 1, cards built from the articles (scripts/paginate-blog.py)
+blog/page/N.html      journal pages 2+, six cards each
+blog/*.html           articles, English (scripts/generate-post.mjs)
+ua/ de/ fr/ es/ it/   the same tree per language: pages from scripts/build-lang.py,
+                      articles from scripts/translate-posts.mjs (Claude, missing ones only)
 assets/site.css       one stylesheet for every page
 assets/site.js        header, drawer, scroll reveals, counters, view counter
 assets/explorer.js    cost arc chart (index + costs only)
@@ -22,6 +24,17 @@ assets/matcher.js     country matcher (countries only)
 img/                  webp images
 _worker.js            /api/views on KV, everything else static
 ```
+
+## Languages
+English is the source. After changing an English page, rebuild the others and the links between them:
+```
+for l in uk de fr es it; do python3 scripts/build-lang.py $l; done
+python3 scripts/paginate-blog.py && python3 scripts/link-articles.py && python3 scripts/link-countries.py
+python3 scripts/sync-header.py && python3 scripts/build-alternates.py
+```
+UI strings live in `content/i18n/<code>.json`. Articles are translated in CI: the weekly
+workflow translates its new article, and `translate-journal.yml` fills in anything missing
+(run by hand, or automatically when an English article is pushed).
 
 ## Local
 ```

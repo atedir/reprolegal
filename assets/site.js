@@ -318,13 +318,18 @@
   });
 
   module('view-counter', function () {
+    // the word after the count, in the page's language
+    var WORD = { en: 'reads', uk: 'прочитань', de: 'Aufrufe', fr: 'lectures', es: 'lecturas', it: 'letture' };
+    var lang = document.documentElement.lang || 'en';
+    var reads = function (n) { return n.toLocaleString(lang === 'en' ? 'en-US' : lang) + ' ' + (WORD[lang] || WORD.en); };
+
     // article pages: increment and show
     var el = document.getElementById('views');
     if (el) {
       fetch('/api/views?path=' + encodeURIComponent(location.pathname))
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          el.textContent = (d && typeof d.views === 'number') ? d.views.toLocaleString('en-US') + ' reads' : '';
+          el.textContent = (d && typeof d.views === 'number') ? reads(d.views) : '';
         })
         .catch(function () { el.textContent = ''; });
     }
@@ -339,7 +344,7 @@
         if (!d || !d.views) return;
         spans.forEach(function (s) {
           var n = d.views[s.getAttribute('data-views')];
-          s.textContent = (typeof n === 'number' && n > 0) ? n.toLocaleString('en-US') + ' reads' : '';
+          s.textContent = (typeof n === 'number' && n > 0) ? reads(n) : '';
         });
       })
       .catch(function () {});

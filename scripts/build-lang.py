@@ -16,23 +16,27 @@ LABEL = {'en':'EN','uk':'UA','de':'DE','fr':'FR','es':'ES','it':'IT'}
 DIR   = {'uk':'ua','de':'de','fr':'fr','es':'es','it':'it'}
 D = DIR[CODE]
 
-# every page that gets a translated copy; the blog stays English on purpose
+# every page that gets a translated copy. blog.html is only the journal's shell here;
+# its cards and the articles themselves come from paginate-blog.py and translate-posts.mjs
 PAGES = ['index.html','programmes.html','costs.html','how-it-works.html','countries.html',
-         'stories.html','faq.html','thank-you.html','privacy.html','cookies.html','404.html'] \
+         'stories.html','faq.html','thank-you.html','privacy.html','cookies.html','404.html',
+         'blog.html'] \
         + sorted(glob.glob('countries/*.html'))
 
 T = json.load(open('content/i18n/%s.json' % CODE))
 META = T.pop('__meta__', {})
 EXPL = T.pop('__explorer__', {})
 PAGE_META = T.pop('__pages__', {})
+BLOG = T.pop('__blog__', {})                     # journal strings, used by the blog scripts
+COUNTRY_META = PAGE_META.pop('__country__', {})  # '{h1} — ...' templates for every country page
 
 KEYS = sorted(T, key=len, reverse=True)          # longest first, so short keys never eat long ones
 
 def localise_links(body):
-    """Internal links point at the same language; blog and anchors are left alone."""
+    """Internal links point at the same language, the journal included; anchors are left alone."""
     def repl(m):
         href = m.group(1)
-        if (href.startswith('/blog') or href.startswith('http') or href.startswith('#')
+        if (href.startswith('http') or href.startswith('#')
                 or href.startswith('mailto') or href.startswith('/' + D + '/')
                 or href in ('/favicon.svg',) or href.startswith('/assets') or href.startswith('/img')):
             return m.group(0)
@@ -66,7 +70,11 @@ for page in PAGES:
     url_path = url_path.replace('/index', '/').replace('//', '/')
 
     # ---- head ----
-    meta = PAGE_META.get(page, {})
+    meta = dict(PAGE_META.get(page, {}))
+    if not meta and page.startswith('countries/') and COUNTRY_META:
+        h1 = re.search(r'<h1>(.*?)</h1>', body, re.S).group(1).strip()
+        h1 = T.get(h1) or h1
+        meta = {k: v.replace('{h1}', h1) for k, v in COUNTRY_META.items()}
     if page == 'index.html' and META:
         meta = {'title': META.get('title'), 'description': META.get('description')}
     if meta.get('title'):
@@ -76,6 +84,8 @@ for page in PAGES:
     if meta.get('description'):
         head = re.sub(r'<meta name="description" content=".*?" />',
                       '<meta name="description" content="%s" />' % meta['description'], head, flags=re.S)
+        head = re.sub(r'<meta property="og:description" content=".*?" />',
+                      '<meta property="og:description" content="%s" />' % meta['description'], head, flags=re.S)
     head = re.sub(r'<link rel="canonical" href="https://reprolegal\.com([^"]*)" />',
                   lambda m: '<link rel="canonical" href="https://reprolegal.com/%s%s" />' % (D, m.group(1)), head)
     head = re.sub(r'<meta property="og:url" content="https://reprolegal\.com([^"]*)" />',
@@ -91,6 +101,7 @@ for page in PAGES:
                       lambda m, v=v: m.group(1) + m.group(2) + v + m.group(3) + m.group(4), body)
         body = body.replace('placeholder="' + k + '"', 'placeholder="' + v + '"')
         body = body.replace('alt="' + k + '"', 'alt="' + v + '"')
+        body = body.replace('label="' + k + '"', 'label="' + v + '"')
     body = localise_links(body)
     body = switcher(body, url_path)
 

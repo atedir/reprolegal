@@ -1,0 +1,78 @@
+name: Translate the journal
+
+# Translates every English article that is missing in a language. Run it by hand
+# once to backfill the whole journal; after that it runs by itself whenever an
+# English article is pushed. Existing translations are never redone, so a run
+# with nothing missing costs nothing.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['blog/*.html']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-post
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Translate missing articles
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/translate-posts.mjs
+
+      - name: List the journal in every language, six articles a page
+        run: python3 scripts/paginate-blog.py
+
+      - name: Cross-link the articles
+        run: python3 scripts/link-articles.py
+
+      - name: Link country pages to the journal
+        run: python3 scripts/link-countries.py
+
+      - name: One header on every page
+        run: python3 scripts/sync-header.py
+
+      - name: Language alternates and sitemap
+        run: python3 scripts/build-alternates.py
+
+      - name: Structural check
+        run: |
+          python3 scripts/check-pages.py
+          python3 scripts/sync-header.py --check
+          python3 scripts/check-css.py
+
+      - name: Commit
+        id: commit
+        run: |
+          git config user.name  "reprolegal-bot"
+          git config user.email "bot@reprolegal.com"
+          git add blog blog.html sitemap.xml countries ua de fr es it
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "content: journal translations"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A push made with the built-in GITHUB_TOKEN does not trigger other
+      # workflows, so the deploy has to happen here or the article never
+      # reaches the site.
+      - name: Deploy to Cloudflare
+        if: steps.commit.outputs.changed == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
