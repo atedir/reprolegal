@@ -504,4 +504,193 @@
 
     if (!read()) open(false);
   });
+  module('lead-popup', function () {
+    // "Personal country guide" popup (the lead magnet), once per visit: DELAY_MS into the session (not into the
+    // page — the clock starts on the first page of the visit and keeps running across pages),
+    // then snoozed for SNOOZE_DAYS after it is closed or sent. It never opens over the cookie
+    // banner or the open contact dock, only waits for them, and never shows to someone who
+    // has just sent the main enquiry form.
+    var DELAY_MS = 20000, SNOOZE_DAYS = 5;
+    var ENDPOINT = 'https://formspree.io/f/mljrnrzq';   // the same inbox as the home page form
+    var SEEN = 'rl-popup-seen', START = 'rl-session-start';
+    var TXT = {
+      en: { kicker: 'Free · personal',
+            title: 'Your personal country guide',
+            sub: 'Tell us where you live and we will email you a guide written for your passport: which of our ten destinations accept you, what each one costs, and what you would still have to do at home. Within one business day, from a coordinator, not a bot.',
+            name: 'Name (optional)',
+            email: 'Email',
+            country: 'Country of residence',
+            consent: 'I agree to be contacted about this request and have read the <a href=\'{p}/privacy\'>privacy policy</a>.',
+            cta: 'Send me my guide',
+            fine: 'One email from a person. No newsletter.',
+            ok: 'Thank you — your guide will arrive within one business day.',
+            err: 'That did not go through. Please write to <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Close' },
+      uk: { kicker: 'Безкоштовно · персонально',
+            title: 'Персональний гайд по країнах',
+            sub: 'Скажіть, де ви живете, — і ми надішлемо на email гайд під ваш паспорт: які з наших десяти напрямків вам підходять, скільки коштує кожен і що ще доведеться зробити вдома. Протягом одного робочого дня, від координатора, а не від бота.',
+            name: 'Ім’я (необов’язково)',
+            email: 'Email',
+            country: 'Країна проживання',
+            consent: 'Погоджуюся на зв’язок щодо цього запиту, <a href=\'{p}/privacy\'>політику конфіденційності</a> прочитано.',
+            cta: 'Отримати гайд',
+            fine: 'Один лист від людини. Жодних розсилок.',
+            ok: 'Дякуємо — гайд надійде протягом одного робочого дня.',
+            err: 'Не вдалося надіслати. Напишіть нам на <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Закрити' },
+      de: { kicker: 'Kostenlos · persönlich',
+            title: 'Ihr persönlicher Länderleitfaden',
+            sub: 'Sagen Sie uns, wo Sie leben, und wir schicken Ihnen per E-Mail einen Leitfaden für Ihren Pass: welche unserer zehn Zielländer Sie aufnehmen, was jedes kostet und was Sie zu Hause noch erledigen müssen. Innerhalb eines Werktags, von einem Menschen, nicht von einem Bot.',
+            name: 'Name (optional)',
+            email: 'E-Mail',
+            country: 'Wohnsitzland',
+            consent: 'Ich bin einverstanden, zu dieser Anfrage kontaktiert zu werden, und habe die <a href=\'{p}/privacy\'>Datenschutzerklärung</a> gelesen.',
+            cta: 'Leitfaden anfordern',
+            fine: 'Eine E-Mail von einem Menschen. Kein Newsletter.',
+            ok: 'Vielen Dank – Ihr Leitfaden kommt innerhalb eines Werktags.',
+            err: 'Das hat nicht geklappt. Bitte schreiben Sie an <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Schließen' },
+      fr: { kicker: 'Gratuit · personnalisé',
+            title: 'Votre guide pays personnalisé',
+            sub: 'Dites-nous où vous vivez et nous vous enverrons par e-mail un guide établi pour votre passeport : lesquelles de nos dix destinations vous acceptent, ce que coûte chacune et ce qu’il vous restera à faire chez vous. Sous un jour ouvré, par une personne, pas par un robot.',
+            name: 'Nom (facultatif)',
+            email: 'E-mail',
+            country: 'Pays de résidence',
+            consent: 'J’accepte d’être contacté(e) au sujet de cette demande et j’ai lu la <a href=\'{p}/privacy\'>politique de confidentialité</a>.',
+            cta: 'Recevoir mon guide',
+            fine: 'Un e-mail d’une personne. Pas de newsletter.',
+            ok: 'Merci — votre guide arrivera sous un jour ouvré.',
+            err: 'L’envoi a échoué. Écrivez-nous à <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Fermer' },
+      es: { kicker: 'Gratis · personalizada',
+            title: 'Su guía de países personalizada',
+            sub: 'Díganos dónde vive y le enviaremos por email una guía pensada para su pasaporte: cuáles de nuestros diez destinos le aceptan, cuánto cuesta cada uno y qué le quedará por hacer en su país. En un día laborable, preparada por una persona, no por un bot.',
+            name: 'Nombre (opcional)',
+            email: 'Email',
+            country: 'País de residencia',
+            consent: 'Acepto que me contacten sobre esta solicitud y he leído la <a href=\'{p}/privacy\'>política de privacidad</a>.',
+            cta: 'Recibir mi guía',
+            fine: 'Un email de una persona. Sin boletines.',
+            ok: 'Gracias — recibirá su guía en un día laborable.',
+            err: 'No se pudo enviar. Escríbanos a <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Cerrar' },
+      it: { kicker: 'Gratis · personale',
+            title: 'La tua guida personale ai Paesi',
+            sub: 'Dicci dove vivi e ti invieremo via email una guida pensata per il tuo passaporto: quali delle nostre dieci destinazioni ti accettano, quanto costa ciascuna e cosa dovrai ancora fare a casa. Entro un giorno lavorativo, da una persona, non da un bot.',
+            name: 'Nome (facoltativo)',
+            email: 'Email',
+            country: 'Paese di residenza',
+            consent: 'Accetto di essere contattato/a per questa richiesta e ho letto l’<a href=\'{p}/privacy\'>informativa sulla privacy</a>.',
+            cta: 'Ricevi la guida',
+            fine: 'Una email da una persona. Nessuna newsletter.',
+            ok: 'Grazie — la tua guida arriverà entro un giorno lavorativo.',
+            err: 'Invio non riuscito. Scrivici a <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
+            close: 'Chiudi' }
+    };
+    var FOLDER = { en: '', uk: '/ua', de: '/de', fr: '/fr', es: '/es', it: '/it' };
+    var lang = TXT[document.documentElement.lang] ? document.documentElement.lang : 'en';
+    var t = TXT[lang];
+    var page = location.pathname.replace(/^\/(ua|de|fr|es|it)(\/|$)/, '/').replace(/\.html$/, '');
+
+    var now = Date.now();
+    var markSeen = function () { try { localStorage.setItem(SEEN, String(Date.now())); } catch (e) {} };
+    // someone who just sent the main form is a lead already
+    if (/^\/thank-you\/?$/.test(page)) { markSeen(); return; }
+    // not on the legal pages, and not on a missing page (served at any URL, but its canonical says /404)
+    var canon = document.querySelector('link[rel="canonical"]');
+    if (/^\/(privacy|cookies)\/?$/.test(page) || (canon && /\/404$/.test(canon.href))) return;
+    var snoozed = function () {
+      try { var s = +localStorage.getItem(SEEN); return s && Date.now() - s < SNOOZE_DAYS * 864e5; } catch (e) { return false; }
+    };
+    if (snoozed()) return;
+
+    var start = now;
+    try {
+      start = +sessionStorage.getItem(START) || now;
+      sessionStorage.setItem(START, String(start));
+    } catch (e) {}
+
+    // wait for a quiet moment: no cookie banner, no open dock or menu, nobody typing in a form
+    var busy = function () {
+      var a = document.activeElement;
+      return document.querySelector('.rlc') || document.querySelector('.cdock.open') ||
+             document.querySelector('.drawer.open') || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+    };
+    var tryOpen = function () {
+      if (snoozed()) return;
+      if (busy()) { setTimeout(tryOpen, 3000); return; }
+      build();
+    };
+
+    function build() {
+      var bg = document.createElement('div');
+      bg.className = 'rlp-bg';
+      bg.innerHTML =
+        '<div class="rlp" role="dialog" aria-modal="true" aria-labelledby="rlp-title">' +
+          '<button type="button" class="rlp-x" aria-label="' + t.close + '">&times;</button>' +
+          '<div class="rlp-kicker">' + t.kicker + '</div>' +
+          '<h3 id="rlp-title">' + t.title + '</h3>' +
+          '<p class="rlp-sub">' + t.sub + '</p>' +
+          '<form novalidate>' +
+            '<input type="text" name="name" placeholder="' + t.name + '" autocomplete="name" />' +
+            '<input type="email" name="email" placeholder="' + t.email + '" autocomplete="email" required />' +
+            '<input type="text" name="country" placeholder="' + t.country + '" autocomplete="country-name" required />' +
+            '<label class="rlp-consent"><input type="checkbox" name="consent" required /> <span>' + t.consent.replace('{p}', FOLDER[lang]) + '</span></label>' +
+            '<input type="hidden" name="source" value="popup-country-guide" />' +
+            '<input type="hidden" name="language" value="' + lang + '" />' +
+            '<input type="hidden" name="page" value="' + page + '" />' +
+            '<input type="hidden" name="_subject" value="ReproLegal — popup: personal country guide" />' +
+            '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="rlp-hp" aria-hidden="true" />' +
+            '<button type="submit" class="rlp-go">' + t.cta + '</button>' +
+          '</form>' +
+          '<p class="rlp-fine">' + t.fine + '</p>' +
+        '</div>';
+      document.body.appendChild(bg);
+      document.documentElement.classList.add('rlp-open');
+      var before = document.activeElement;
+
+      var close = function () {
+        markSeen();
+        bg.classList.remove('in');
+        document.documentElement.classList.remove('rlp-open');
+        document.removeEventListener('keydown', onKey);
+        setTimeout(function () { bg.remove(); if (before && before.focus) before.focus({ preventScroll: true }); }, 250);
+      };
+      var onKey = function (e) { if (e.key === 'Escape') close(); };
+      bg.querySelector('.rlp-x').addEventListener('click', close);
+      bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
+      document.addEventListener('keydown', onKey);
+
+      var form = bg.querySelector('form');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        var btn = form.querySelector('.rlp-go');
+        btn.disabled = true;
+        fetch(ENDPOINT, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); })
+          .then(function () {
+            markSeen();
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ event: 'popup_lead', lead_source: 'popup-country-guide' });
+            form.outerHTML = '<p class="rlp-ok">' + t.ok + '</p>';
+            bg.querySelector('.rlp-fine').remove();
+            setTimeout(close, 2600);
+          })
+          .catch(function () {
+            btn.disabled = false;
+            var err = form.querySelector('.rlp-err') || form.appendChild(document.createElement('p'));
+            err.className = 'rlp-err';
+            err.innerHTML = t.err;
+          });
+      });
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'popup_view', lead_source: 'popup-country-guide' });
+      requestAnimationFrame(function () { bg.classList.add('in'); });
+      form.querySelector('[name="email"]').focus({ preventScroll: true });
+    }
+
+    setTimeout(tryOpen, Math.max(0, DELAY_MS - (now - start)));
+  });
 })();

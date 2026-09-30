@@ -20,6 +20,9 @@
      click_email        a click on a mailto: link
      click_phone        a click on a tel: link (none on the site yet)
      contact_open       the contact dock was opened
+     generate_lead      also from the country-guide popup, with lead_source=popup-country-guide
+                        (the form's own leads carry lead_source=contact-form)
+     popup_view         the country-guide popup was shown
 """
 import os, sys, time
 from google.oauth2 import service_account
@@ -90,6 +93,8 @@ if need: run(W.built_in_variables().create(parent=P, type=need))
 upsert('variables', {'name': 'GA4 Measurement ID', 'type': 'c', 'parameter': [tmpl('value', GA4_ID)]})
 upsert('variables', {'name': 'Page language', 'type': 'jsm', 'parameter': [tmpl('javascript',
        'function(){return document.documentElement.lang||"en";}')]})
+upsert('variables', {'name': 'DLV lead_source', 'type': 'v', 'parameter': [
+       {'type': 'integer', 'key': 'dataLayerVersion', 'value': '2'}, tmpl('name', 'lead_source')]})
 upsert('variables', {'name': 'DLV contact_action', 'type': 'v', 'parameter': [
        {'type': 'integer', 'key': 'dataLayerVersion', 'value': '2'}, tmpl('name', 'contact_action')]})
 
@@ -107,6 +112,10 @@ t_email = link_trigger('Click – mailto', 'startsWith', 'mailto:')
 t_phone = link_trigger('Click – tel', 'startsWith', 'tel:')
 t_wa = link_trigger('Click – WhatsApp', 'contains', 'wa.me/')
 t_cal = link_trigger('Click – Cal.com booking', 'contains', 'cal.com/')
+t_popup_lead = upsert('triggers', {'name': 'Popup lead sent', 'type': 'customEvent',
+    'customEventFilter': [cond('equals', '{{_event}}', 'popup_lead')]})
+t_popup_view = upsert('triggers', {'name': 'Popup shown', 'type': 'customEvent',
+    'customEventFilter': [cond('equals', '{{_event}}', 'popup_view')]})
 t_dock = upsert('triggers', {'name': 'Contact dock opened', 'type': 'customEvent',
     'customEventFilter': [cond('equals', '{{_event}}', 'contact_dock')],
     'filter': [cond('equals', '{{DLV contact_action}}', 'open')]})
@@ -130,15 +139,17 @@ if existing:
 else:
     run(W.tags().create(parent=P, body=google_tag))
 
-def event_tag(name, event, trigger, with_link=True):
-    params = [('page_language', '{{Page language}}')] + ([('link_url', '{{Click URL}}')] if with_link else [])
+def event_tag(name, event, trigger, with_link=True, extra=()):
+    params = [('page_language', '{{Page language}}')] + ([('link_url', '{{Click URL}}')] if with_link else []) + list(extra)
     upsert('tags', {'name': name, 'type': 'gaawe',
         'parameter': [tmpl('eventName', event), tmpl('measurementIdOverride', '{{GA4 Measurement ID}}'),
                       {'type': 'list', 'key': 'eventSettingsTable', 'list': [
                           {'type': 'map', 'map': [tmpl('parameter', k), tmpl('parameterValue', v)]} for k, v in params]}],
         'firingTriggerId': [trigger['triggerId']], 'consentSettings': NEEDS_ANALYTICS})
 
-event_tag('GA4 – generate_lead', 'generate_lead', t_lead, with_link=False)
+event_tag('GA4 – generate_lead', 'generate_lead', t_lead, with_link=False, extra=[('lead_source', 'contact-form')])
+event_tag('GA4 – generate_lead (popup)', 'generate_lead', t_popup_lead, with_link=False, extra=[('lead_source', '{{DLV lead_source}}')])
+event_tag('GA4 – popup_view', 'popup_view', t_popup_view, with_link=False)
 event_tag('GA4 – book_call_click', 'book_call_click', t_cal)
 event_tag('GA4 – click_whatsapp', 'click_whatsapp', t_wa)
 event_tag('GA4 – click_email', 'click_email', t_email)
