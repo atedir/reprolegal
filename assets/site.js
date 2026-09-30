@@ -505,96 +505,83 @@
     if (!read()) open(false);
   });
   module('lead-popup', function () {
-    // "Personal country guide" popup (the lead magnet), once per visit: DELAY_MS into the session (not into the
-    // page — the clock starts on the first page of the visit and keeps running across pages),
-    // then snoozed for SNOOZE_DAYS after it is closed or sent. It never opens over the cookie
-    // banner or the open contact dock, only waits for them, and never shows to someone who
-    // has just sent the main enquiry form.
+    // Lead magnet: "which countries accept your passport?" — a personal guide by email.
+    // Opens DELAY_MS into the visit (the clock starts on the first page and keeps running
+    // across pages), never over the cookie banner, the open dock or a field someone is typing
+    // in, and is snoozed for SNOOZE_DAYS once closed or sent. Not on thank-you, privacy,
+    // cookies or 404, and never for someone who has just sent the main enquiry form.
     var DELAY_MS = 20000, SNOOZE_DAYS = 5;
     var ENDPOINT = 'https://formspree.io/f/mljrnrzq';   // the same inbox as the home page form
     var SEEN = 'rl-popup-seen', START = 'rl-session-start';
     var TXT = {
-      en: { kicker: 'Free · personal',
-            title: 'Your personal country guide',
-            sub: 'Tell us where you live and we will email you a guide written for your passport: which of our ten destinations accept you, what each one costs, and what you would still have to do at home. Within one business day, from a coordinator, not a bot.',
-            name: 'Name (optional)',
-            email: 'Email',
-            country: 'Country of residence',
-            consent: 'I agree to be contacted about this request and have read the <a href=\'{p}/privacy\'>privacy policy</a>.',
-            cta: 'Send me my guide',
-            fine: 'One email from a person. No newsletter.',
-            ok: 'Thank you — your guide will arrive within one business day.',
-            err: 'That did not go through. Please write to <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Close' },
-      uk: { kicker: 'Безкоштовно · персонально',
-            title: 'Персональний гайд по країнах',
-            sub: 'Скажіть, де ви живете, — і ми надішлемо на email гайд під ваш паспорт: які з наших десяти напрямків вам підходять, скільки коштує кожен і що ще доведеться зробити вдома. Протягом одного робочого дня, від координатора, а не від бота.',
-            name: 'Ім’я (необов’язково)',
-            email: 'Email',
-            country: 'Країна проживання',
-            consent: 'Погоджуюся на зв’язок щодо цього запиту, <a href=\'{p}/privacy\'>політику конфіденційності</a> прочитано.',
-            cta: 'Отримати гайд',
-            fine: 'Один лист від людини. Жодних розсилок.',
-            ok: 'Дякуємо — гайд надійде протягом одного робочого дня.',
-            err: 'Не вдалося надіслати. Напишіть нам на <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Закрити' },
-      de: { kicker: 'Kostenlos · persönlich',
-            title: 'Ihr persönlicher Länderleitfaden',
-            sub: 'Sagen Sie uns, wo Sie leben, und wir schicken Ihnen per E-Mail einen Leitfaden für Ihren Pass: welche unserer zehn Zielländer Sie aufnehmen, was jedes kostet und was Sie zu Hause noch erledigen müssen. Innerhalb eines Werktags, von einem Menschen, nicht von einem Bot.',
-            name: 'Name (optional)',
-            email: 'E-Mail',
-            country: 'Wohnsitzland',
-            consent: 'Ich bin einverstanden, zu dieser Anfrage kontaktiert zu werden, und habe die <a href=\'{p}/privacy\'>Datenschutzerklärung</a> gelesen.',
-            cta: 'Leitfaden anfordern',
-            fine: 'Eine E-Mail von einem Menschen. Kein Newsletter.',
-            ok: 'Vielen Dank – Ihr Leitfaden kommt innerhalb eines Werktags.',
-            err: 'Das hat nicht geklappt. Bitte schreiben Sie an <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Schließen' },
-      fr: { kicker: 'Gratuit · personnalisé',
-            title: 'Votre guide pays personnalisé',
-            sub: 'Dites-nous où vous vivez et nous vous enverrons par e-mail un guide établi pour votre passeport : lesquelles de nos dix destinations vous acceptent, ce que coûte chacune et ce qu’il vous restera à faire chez vous. Sous un jour ouvré, par une personne, pas par un robot.',
-            name: 'Nom (facultatif)',
-            email: 'E-mail',
-            country: 'Pays de résidence',
-            consent: 'J’accepte d’être contacté(e) au sujet de cette demande et j’ai lu la <a href=\'{p}/privacy\'>politique de confidentialité</a>.',
-            cta: 'Recevoir mon guide',
-            fine: 'Un e-mail d’une personne. Pas de newsletter.',
-            ok: 'Merci — votre guide arrivera sous un jour ouvré.',
-            err: 'L’envoi a échoué. Écrivez-nous à <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Fermer' },
-      es: { kicker: 'Gratis · personalizada',
-            title: 'Su guía de países personalizada',
-            sub: 'Díganos dónde vive y le enviaremos por email una guía pensada para su pasaporte: cuáles de nuestros diez destinos le aceptan, cuánto cuesta cada uno y qué le quedará por hacer en su país. En un día laborable, preparada por una persona, no por un bot.',
-            name: 'Nombre (opcional)',
-            email: 'Email',
-            country: 'País de residencia',
-            consent: 'Acepto que me contacten sobre esta solicitud y he leído la <a href=\'{p}/privacy\'>política de privacidad</a>.',
-            cta: 'Recibir mi guía',
-            fine: 'Un email de una persona. Sin boletines.',
-            ok: 'Gracias — recibirá su guía en un día laborable.',
-            err: 'No se pudo enviar. Escríbanos a <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Cerrar' },
-      it: { kicker: 'Gratis · personale',
-            title: 'La tua guida personale ai Paesi',
-            sub: 'Dicci dove vivi e ti invieremo via email una guida pensata per il tuo passaporto: quali delle nostre dieci destinazioni ti accettano, quanto costa ciascuna e cosa dovrai ancora fare a casa. Entro un giorno lavorativo, da una persona, non da un bot.',
-            name: 'Nome (facoltativo)',
-            email: 'Email',
-            country: 'Paese di residenza',
-            consent: 'Accetto di essere contattato/a per questa richiesta e ho letto l’<a href=\'{p}/privacy\'>informativa sulla privacy</a>.',
-            cta: 'Ricevi la guida',
-            fine: 'Una email da una persona. Nessuna newsletter.',
-            ok: 'Grazie — la tua guida arriverà entro un giorno lavorativo.',
-            err: 'Invio non riuscito. Scrivici a <a href=\'mailto:reprolegal@gmail.com\'>reprolegal@gmail.com</a>.',
-            close: 'Chiudi' }
+      en: { badge: 'Free guide', title: 'Which countries accept your passport?',
+            sub: 'Tell us where you live — we will prepare a guide for your situation and send it within one business day.',
+            list: ['The destinations open to you, and the ones that are not', 'Typical cost of each, item by item', 'What you still have to do at home after the birth'],
+            by: 'Prepared personally by Alyona Kalchuk', stats: '10 years · 500+ families · 30+ countries',
+            country: 'Where do you live?', choose: 'Choose your country', common: 'Most common', all: 'All countries',
+            email: 'Your email', cta: 'Get my free guide',
+            micro: 'One email from a person, no newsletter. We use your address only for this — <a href="{p}/privacy">privacy policy</a>.',
+            okTitle: 'Your guide is on its way', ok: 'Alyona will email it within one business day. If it does not arrive, check your spam folder.',
+            err: 'That did not go through. Please write to <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Close' },
+      uk: { badge: 'Безкоштовний гайд', title: 'Які країни приймають ваш паспорт?',
+            sub: 'Скажіть, де ви живете, — ми підготуємо гайд під вашу ситуацію і надішлемо його протягом одного робочого дня.',
+            list: ['Напрямки, які вам відкриті, і ті, що ні', 'Типова вартість кожного — по статтях', 'Що ще доведеться зробити вдома після народження'],
+            by: 'Готує особисто Альона Кальчук', stats: '10 років · 500+ родин · 30+ країн',
+            country: 'Де ви живете?', choose: 'Оберіть країну', common: 'Найпоширеніші', all: 'Усі країни',
+            email: 'Ваш email', cta: 'Отримати безкоштовний гайд',
+            micro: 'Один лист від людини, жодних розсилок. Адресу використаємо лише для цього — <a href="{p}/privacy">політика конфіденційності</a>.',
+            okTitle: 'Гайд уже готується', ok: 'Альона надішле його протягом одного робочого дня. Якщо листа немає — перевірте «Спам».',
+            err: 'Не вдалося надіслати. Напишіть нам на <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Закрити' },
+      de: { badge: 'Kostenloser Leitfaden', title: 'Welche Länder akzeptieren Ihren Pass?',
+            sub: 'Sagen Sie uns, wo Sie leben – wir erstellen einen Leitfaden für Ihre Situation und senden ihn innerhalb eines Werktags.',
+            list: ['Die Zielländer, die Ihnen offenstehen – und die, die es nicht tun', 'Typische Kosten für jedes, Posten für Posten', 'Was Sie nach der Geburt zu Hause noch erledigen müssen'],
+            by: 'Persönlich erstellt von Alyona Kalchuk', stats: '10 Jahre · 500+ Familien · 30+ Länder',
+            country: 'Wo leben Sie?', choose: 'Land auswählen', common: 'Am häufigsten', all: 'Alle Länder',
+            email: 'Ihre E-Mail-Adresse', cta: 'Kostenlosen Leitfaden erhalten',
+            micro: 'Eine E-Mail von einem Menschen, kein Newsletter. Ihre Adresse nutzen wir nur dafür – <a href="{p}/privacy">Datenschutzerklärung</a>.',
+            okTitle: 'Ihr Leitfaden ist unterwegs', ok: 'Alyona schickt ihn innerhalb eines Werktags. Sehen Sie bitte auch im Spam-Ordner nach.',
+            err: 'Das hat nicht geklappt. Bitte schreiben Sie an <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Schließen' },
+      fr: { badge: 'Guide gratuit', title: 'Quels pays acceptent votre passeport ?',
+            sub: 'Dites-nous où vous vivez : nous préparons un guide pour votre situation et vous l’envoyons sous un jour ouvré.',
+            list: ['Les destinations qui vous sont ouvertes, et celles qui ne le sont pas', 'Le coût type de chacune, poste par poste', 'Ce qu’il vous restera à faire chez vous après la naissance'],
+            by: 'Préparé personnellement par Alyona Kalchuk', stats: '10 ans · 500+ familles · 30+ pays',
+            country: 'Où vivez-vous ?', choose: 'Choisissez votre pays', common: 'Les plus fréquents', all: 'Tous les pays',
+            email: 'Votre e-mail', cta: 'Recevoir mon guide gratuit',
+            micro: 'Un e-mail d’une personne, pas de newsletter. Votre adresse ne sert qu’à cela — <a href="{p}/privacy">politique de confidentialité</a>.',
+            okTitle: 'Votre guide est en route', ok: 'Alyona vous l’envoie sous un jour ouvré. Pensez à vérifier vos spams.',
+            err: 'L’envoi a échoué. Écrivez-nous à <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Fermer' },
+      es: { badge: 'Guía gratuita', title: '¿Qué países aceptan su pasaporte?',
+            sub: 'Díganos dónde vive: prepararemos una guía para su situación y se la enviaremos en un día laborable.',
+            list: ['Los destinos a los que puede acceder, y los que no', 'El coste típico de cada uno, partida por partida', 'Lo que le quedará por hacer en su país después del nacimiento'],
+            by: 'Preparada personalmente por Alyona Kalchuk', stats: '10 años · 500+ familias · 30+ países',
+            country: '¿Dónde vive?', choose: 'Elija su país', common: 'Más frecuentes', all: 'Todos los países',
+            email: 'Su email', cta: 'Recibir mi guía gratuita',
+            micro: 'Un email de una persona, sin boletines. Usaremos su dirección solo para esto — <a href="{p}/privacy">política de privacidad</a>.',
+            okTitle: 'Su guía está en camino', ok: 'Alyona se la enviará en un día laborable. Revise también la carpeta de spam.',
+            err: 'No se pudo enviar. Escríbanos a <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Cerrar' },
+      it: { badge: 'Guida gratuita', title: 'Quali Paesi accettano il tuo passaporto?',
+            sub: 'Dicci dove vivi: prepariamo una guida per la tua situazione e te la inviamo entro un giorno lavorativo.',
+            list: ['Le destinazioni aperte per te, e quelle che non lo sono', 'Il costo tipico di ciascuna, voce per voce', 'Cosa dovrai ancora fare a casa dopo la nascita'],
+            by: 'Preparata personalmente da Alyona Kalchuk', stats: '10 anni · 500+ famiglie · 30+ Paesi',
+            country: 'Dove vivi?', choose: 'Scegli il tuo Paese', common: 'Più comuni', all: 'Tutti i Paesi',
+            email: 'La tua email', cta: 'Ricevi la guida gratuita',
+            micro: 'Una email da una persona, nessuna newsletter. Useremo il tuo indirizzo solo per questo — <a href="{p}/privacy">informativa sulla privacy</a>.',
+            okTitle: 'La tua guida è in arrivo', ok: 'Alyona te la invierà entro un giorno lavorativo. Controlla anche lo spam.',
+            err: 'Invio non riuscito. Scrivici a <a href="mailto:reprolegal@gmail.com">reprolegal@gmail.com</a>.', close: 'Chiudi' }
     };
     var FOLDER = { en: '', uk: '/ua', de: '/de', fr: '/fr', es: '/es', it: '/it' };
+    // where most enquiries come from first, then every other country
+    var COMMON = 'DE US GB FR IT ES IL NL CH AT IE SE BE PL PT CA AU AE SA CN JP KR SG UA'.split(' ');
+    var ALL = ('AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI KH CM CA CV CF TD CL CN CO KM CG CD CR CI HR CU CY CZ ' +
+      'DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HK HU IS IN ID IR IQ IE IL IT JM JP JO KZ KE KI KW KG LA LV LB ' +
+      'LS LR LY LI LT LU MO MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG KP MK NO OM PK PW PS PA PG PY PE PH PL PT PR QA ' +
+      'RO RU RW KN LC VC WS SM ST SA SN RS SC SL SG SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU ' +
+      'VA VE VN YE ZM ZW').split(' ');
     var lang = TXT[document.documentElement.lang] ? document.documentElement.lang : 'en';
     var t = TXT[lang];
     var page = location.pathname.replace(/^\/(ua|de|fr|es|it)(\/|$)/, '/').replace(/\.html$/, '');
 
-    var now = Date.now();
     var markSeen = function () { try { localStorage.setItem(SEEN, String(Date.now())); } catch (e) {} };
-    // someone who just sent the main form is a lead already
     if (/^\/thank-you\/?$/.test(page)) { markSeen(); return; }
     // not on the legal pages, and not on a missing page (served at any URL, but its canonical says /404)
     var canon = document.querySelector('link[rel="canonical"]');
@@ -604,46 +591,69 @@
     };
     if (snoozed()) return;
 
-    var start = now;
+    var now = Date.now(), start = now;
     try {
       start = +sessionStorage.getItem(START) || now;
       sessionStorage.setItem(START, String(start));
     } catch (e) {}
 
-    // wait for a quiet moment: no cookie banner, no open dock or menu, nobody typing in a form
+    // wait for a quiet moment: no cookie banner, no open dock or menu, nobody typing in a form;
+    // once it is quiet again, give the visitor a breath before opening
     var busy = function () {
       var a = document.activeElement;
       return document.querySelector('.rlc') || document.querySelector('.cdock.open') ||
              document.querySelector('.drawer.open') || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
     };
+    var wasBusy = false;
     var tryOpen = function () {
       if (snoozed()) return;
-      if (busy()) { setTimeout(tryOpen, 3000); return; }
+      if (busy()) { wasBusy = true; setTimeout(tryOpen, 1000); return; }
+      if (wasBusy) { wasBusy = false; setTimeout(tryOpen, 1500); return; }
       build();
     };
 
+    function countryOptions() {
+      var local, english;
+      try {
+        local = new Intl.DisplayNames([lang], { type: 'region' });
+        english = new Intl.DisplayNames(['en'], { type: 'region' });
+      } catch (e) { return ''; }
+      var opt = function (c) { return '<option value="' + english.of(c) + '">' + local.of(c) + '</option>'; };
+      var rest = ALL.filter(function (c) { return COMMON.indexOf(c) < 0; })
+        .sort(function (a, b) { return local.of(a).localeCompare(local.of(b), lang); });
+      return '<optgroup label="' + t.common + '">' + COMMON.map(opt).join('') + '</optgroup>' +
+             '<optgroup label="' + t.all + '">' + rest.map(opt).join('') + '</optgroup>';
+    }
+
     function build() {
+      var check = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var arrow = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       var bg = document.createElement('div');
       bg.className = 'rlp-bg';
       bg.innerHTML =
         '<div class="rlp" role="dialog" aria-modal="true" aria-labelledby="rlp-title">' +
           '<button type="button" class="rlp-x" aria-label="' + t.close + '">&times;</button>' +
-          '<div class="rlp-kicker">' + t.kicker + '</div>' +
-          '<h3 id="rlp-title">' + t.title + '</h3>' +
-          '<p class="rlp-sub">' + t.sub + '</p>' +
-          '<form novalidate>' +
-            '<input type="text" name="name" placeholder="' + t.name + '" autocomplete="name" />' +
-            '<input type="email" name="email" placeholder="' + t.email + '" autocomplete="email" required />' +
-            '<input type="text" name="country" placeholder="' + t.country + '" autocomplete="country-name" required />' +
-            '<label class="rlp-consent"><input type="checkbox" name="consent" required /> <span>' + t.consent.replace('{p}', FOLDER[lang]) + '</span></label>' +
+          '<div class="rlp-pitch">' +
+            '<span class="rlp-badge">' + t.badge + '</span>' +
+            '<h3 id="rlp-title">' + t.title + '</h3>' +
+            '<p class="rlp-sub">' + t.sub + '</p>' +
+            '<ul class="rlp-list">' + t.list.map(function (x) { return '<li>' + check + '<span>' + x + '</span></li>'; }).join('') + '</ul>' +
+            '<div class="rlp-by"><img src="/img/team-alyona.webp" alt="" width="48" height="48" loading="lazy" />' +
+              '<div><b>' + t.by + '</b><small>' + t.stats + '</small></div></div>' +
+          '</div>' +
+          '<form class="rlp-form" novalidate>' +
+            '<label class="rlp-field"><span>' + t.country + '</span>' +
+              '<select name="country" required><option value="" disabled selected>' + t.choose + '</option>' + countryOptions() + '</select></label>' +
+            '<label class="rlp-field"><span>' + t.email + '</span>' +
+              '<input type="email" name="email" placeholder="name@example.com" autocomplete="email" required /></label>' +
             '<input type="hidden" name="source" value="popup-country-guide" />' +
             '<input type="hidden" name="language" value="' + lang + '" />' +
             '<input type="hidden" name="page" value="' + page + '" />' +
             '<input type="hidden" name="_subject" value="ReproLegal — popup: personal country guide" />' +
             '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="rlp-hp" aria-hidden="true" />' +
-            '<button type="submit" class="rlp-go">' + t.cta + '</button>' +
+            '<button type="submit" class="rlp-go"><span>' + t.cta + '</span>' + arrow + '</button>' +
+            '<p class="rlp-micro">' + t.micro.replace('{p}', FOLDER[lang]) + '</p>' +
           '</form>' +
-          '<p class="rlp-fine">' + t.fine + '</p>' +
         '</div>';
       document.body.appendChild(bg);
       document.documentElement.classList.add('rlp-open');
@@ -654,7 +664,7 @@
         bg.classList.remove('in');
         document.documentElement.classList.remove('rlp-open');
         document.removeEventListener('keydown', onKey);
-        setTimeout(function () { bg.remove(); if (before && before.focus) before.focus({ preventScroll: true }); }, 250);
+        setTimeout(function () { bg.remove(); if (before && before.focus) before.focus({ preventScroll: true }); }, 300);
       };
       var onKey = function (e) { if (e.key === 'Escape') close(); };
       bg.querySelector('.rlp-x').addEventListener('click', close);
@@ -673,9 +683,9 @@
             markSeen();
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ event: 'popup_lead', lead_source: 'popup-country-guide' });
-            form.outerHTML = '<p class="rlp-ok">' + t.ok + '</p>';
-            bg.querySelector('.rlp-fine').remove();
-            setTimeout(close, 2600);
+            form.outerHTML = '<div class="rlp-form rlp-done"><span class="rlp-tick">' + check + '</span>' +
+                             '<b>' + t.okTitle + '</b><p>' + t.ok + '</p></div>';
+            setTimeout(close, 4000);
           })
           .catch(function () {
             btn.disabled = false;
@@ -688,7 +698,6 @@
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'popup_view', lead_source: 'popup-country-guide' });
       requestAnimationFrame(function () { bg.classList.add('in'); });
-      form.querySelector('[name="email"]').focus({ preventScroll: true });
     }
 
     setTimeout(tryOpen, Math.max(0, DELAY_MS - (now - start)));
