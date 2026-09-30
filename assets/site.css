@@ -618,13 +618,19 @@ html.rlp-open{overflow:hidden}
 @media(max-width:760px){
   .rlp-bg{align-items:flex-end;padding:0}
   .rlp{grid-template-columns:1fr;width:100%;max-height:94vh;transform:translateY(40px)}
-  .rlp-pitch{padding:30px 20px 18px}
-  .rlp h3{font-size:24px;margin:14px 0 8px;padding-right:28px}
-  .rlp-sub{font-size:14px}
+  .rlp-pitch{padding:24px 20px 16px}
+  .rlp-badge{font-size:11.5px;padding:5px 11px}
+  .rlp h3{font-size:23px;margin:12px 0 0;padding-right:28px}
+  .rlp-sub{display:none}          /* the three checks say the same thing, and the button must stay in view */
   .rlp-list{margin-top:12px}
-  .rlp-list li{font-size:14px;padding:4px 0}
-  .rlp-by{margin-top:16px;padding-top:14px}
-  .rlp-form{padding:20px 20px calc(20px + env(safe-area-inset-bottom))}
-  .rlp-field{margin-bottom:12px}
+  .rlp-list li{font-size:14px;padding:3px 0}
+  .rlp-by{margin-top:12px;padding-top:12px}
+  .rlp-by img{width:40px;height:40px}
+  .rlp-form{padding:16px 20px calc(18px + env(safe-area-inset-bottom))}
+  .rlp-field{margin-bottom:10px}
+  .rlp-field>span{font-size:12.5px;margin-bottom:5px}
+  .rlp-field select,.rlp-field input{height:46px}
+  .rlp-go{height:52px;margin-top:4px}
+  .rlp-micro{margin-top:10px;font-size:11.5px}
 }
 @media print{.rlp-bg{display:none}}
