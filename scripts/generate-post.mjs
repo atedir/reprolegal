@@ -3,11 +3,14 @@
  * Generates one SEO article every run and commits it.
  *   node scripts/generate-post.mjs
  * Requires: ANTHROPIC_API_KEY
- * Queue: content/topics.txt (one topic per line). When empty, Claude proposes the next topic.
+ * Topic: the next line of content/topics.txt; when that is empty, the Search Console queries the
+ * site already shows for but ranks poorly on (needs GSC_SA_KEY, see scripts/gsc.mjs); failing
+ * that, Claude proposes one.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { ROOT, claude as ask, chrome, articleHtml, lang } from './lib/article.mjs';
+import { fetchQueries, opportunities } from './gsc.mjs';
 
 const MODEL = 'claude-sonnet-4-6';
 const TOPICS = path.join(ROOT, 'content/topics.txt');
@@ -48,6 +51,20 @@ async function nextTopic() {
     return topic;
   }
   const existing = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => [])).join(', ');
+
+  // Real demand first: queries Google already shows us for but where we rank poorly.
+  try {
+    const opp = opportunities(await fetchQueries({ siteUrl: 'reprolegal.com', days: 90 }));
+    if (opp.length) {
+      const demand = opp.map(r => `- "${r.query}" — ${r.impressions} impressions, ${r.clicks} clicks, position ${r.position.toFixed(1)}`).join('\n');
+      const pick = await claude(`You plan articles for ReproLegal, an agency coordinating surrogacy and IVF programmes for intended parents. These are real Google Search Console queries the site already appears for but ranks poorly on. Pick the most valuable cluster of related queries a practical article could answer head-on, and return ONE topic line for it: no quotes, no full stop, under 14 words, in English even if the queries are not. It must not duplicate an existing article. Ignore queries that are another company's name. Answer with the topic only.`,
+        `Queries:\n${demand}\n\nExisting articles: ${existing}`, 600);
+      const topic = pick.split('\n').map(s => s.trim()).filter(Boolean)[0] || '';
+      if (topic.length >= 15) { console.log('Topic from Search Console demand'); return topic; }
+    } else console.log('GSC: no usable queries yet');
+  } catch (e) {
+    console.error('GSC lookup failed, continuing without it:', e.message);
+  }
 
   // A short, single-purpose system prompt for this call. Reusing the article
   // prompt here made the model start writing an article instead of naming one.

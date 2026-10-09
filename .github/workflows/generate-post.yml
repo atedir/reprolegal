@@ -24,6 +24,7 @@ jobs:
       - name: Generate article
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GSC_SA_KEY: ${{ secrets.GSC_SA_KEY }}
         run: node scripts/generate-post.mjs
 
       - name: Add the publication date to the article and its card
