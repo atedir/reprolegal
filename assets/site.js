@@ -504,6 +504,64 @@
 
     if (!read()) open(false);
   });
+  module('lead-attribution', function () {
+    // Every enquiry says where the visitor came from, whatever they chose on the cookie banner:
+    // GA4 only ever sees people who accepted analytics, and never sees who they are. The first
+    // page of the visit, the outside referrer and any campaign tags are kept for this tab only
+    // (session storage, never sent anywhere) and added to the form when the visitor sends it.
+    var KEY = 'rl-visit';
+    var CLICK_IDS = ['gclid', 'gbraid', 'wbraid', 'dclid', 'fbclid', 'msclkid'];
+    var visit;
+    try { visit = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) {}
+    if (!visit) {
+      var ref = document.referrer && document.referrer.indexOf(location.origin) !== 0 ? document.referrer : '';
+      visit = { landing: location.pathname + location.search, ref: ref, start: new Date().toISOString(), pages: 0 };
+    }
+    visit.pages++;
+    try { sessionStorage.setItem(KEY, JSON.stringify(visit)); } catch (e) {}
+
+    var params = new URLSearchParams((visit.landing.split('?')[1]) || '');
+    var host = function (u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
+    var cameFrom = function () {
+      var src = params.get('utm_source'), med = (params.get('utm_medium') || '').toLowerCase();
+      if (CLICK_IDS.some(function (k) { return params.get(k); }) || /cpc|ppc|paid/.test(med)) return 'Paid ad' + (src ? ' · ' + src : '');
+      if (src) return 'Campaign · ' + src + (med ? ' / ' + med : '');
+      var h = host(visit.ref);
+      if (!h) return 'Direct (typed, bookmark or an app)';
+      if (/(^|\.)(google|bing|duckduckgo|yahoo|yandex|ecosia|baidu)\./.test(h)) return 'Search · ' + h;
+      if (/facebook|instagram|linkedin|t\.co$|twitter|x\.com|tiktok|reddit|youtube|pinterest|telegram|whatsapp/.test(h)) return 'Social · ' + h;
+      if (/chatgpt|openai|perplexity|claude|gemini|copilot/.test(h)) return 'AI assistant · ' + h;
+      return 'Link from another site · ' + h;
+    };
+
+    window.rlAttribution = function () {
+      var campaign = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
+        .filter(function (k) { return params.get(k); }).map(function (k) { return k.slice(4) + '=' + params.get(k); }).join(' · ');
+      var click = CLICK_IDS.filter(function (k) { return params.get(k); }).map(function (k) { return k + '=' + params.get(k); }).join(' · ');
+      return {
+        came_from: cameFrom(),
+        referrer: visit.ref || '(none)',
+        landing_page: visit.landing,
+        campaign: campaign || '(none)',
+        click_id: click || '(none)',
+        pages_viewed: String(visit.pages),
+        visit_started: visit.start,
+        sent_from_page: location.pathname
+      };
+    };
+
+    // the home page form posts the ordinary way: add the fields just before it goes
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form.action || form.action.indexOf('formspree.io') < 0 || form.classList.contains('rlp-form')) return;
+      var a = window.rlAttribution();
+      Object.keys(a).forEach(function (k) {
+        var input = form.querySelector('input[name="' + k + '"]') || form.appendChild(document.createElement('input'));
+        input.type = 'hidden'; input.name = k; input.value = a[k];
+      });
+    }, true);
+  });
+
   module('lead-popup', function () {
     // Lead magnet: "which countries accept your passport?" — a personal guide by email.
     // Opens DELAY_MS into the visit (the clock starts on the first page and keeps running
@@ -685,7 +743,9 @@
         if (!form.checkValidity()) { form.reportValidity(); return; }
         var btn = form.querySelector('.rlp-go');
         btn.disabled = true;
-        fetch(ENDPOINT, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        var data = new FormData(form);
+        if (window.rlAttribution) { var at = window.rlAttribution(); Object.keys(at).forEach(function (k) { data.append(k, at[k]); }); }
+        fetch(ENDPOINT, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
           .then(function (r) { if (!r.ok) throw new Error(r.status); })
           .then(function () {
             markSeen();
