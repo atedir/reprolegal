@@ -31,6 +31,48 @@ export default {
       }
     }
 
+    // ---- first-party events (no cookies, no identifiers) ----------------
+    //   POST /api/e        {e, sm, lp, p, l, d} from site.js -> one KV key per event
+    //   GET  /api/events?days=30   Authorization: Bearer <REPORT_TOKEN> -> the events
+    // Each event says what happened, on which page and language, and the visit's
+    // source/medium and landing page. No name, email, IP or id is stored, which is why
+    // it can count everyone, including visitors who declined analytics cookies.
+    if (url.pathname === '/api/e' && request.method === 'POST') {
+      const origin = request.headers.get('origin') || '';
+      if (origin && origin !== env.SITE_URL) return new Response(null, { status: 204 });
+      try {
+        const b = await request.json();
+        if (!EVENTS.has(b.e)) return new Response(null, { status: 204 });
+        const cut = (v, n = 200) => String(v || '').slice(0, n);
+        const now = new Date();
+        const ev = { t: now.toISOString(), e: b.e, sm: cut(b.sm, 120), lp: cut(b.lp), p: cut(b.p),
+                     l: cut(b.l, 5), d: cut(b.d, 10), c: cut(request.cf && request.cf.country, 2) };
+        const key = `ev:${now.toISOString().slice(0, 10)}:${now.getTime()}:${Math.random().toString(36).slice(2, 8)}`;
+        // the event rides in the key's metadata, so a report is a few list calls and no reads
+        await env.VIEWS.put(key, '', { metadata: ev, expirationTtl: 400 * 86400 });
+      } catch (e) {}
+      return new Response(null, { status: 204 });
+    }
+
+    if (url.pathname === '/api/events') {
+      if (!env.REPORT_TOKEN || request.headers.get('authorization') !== `Bearer ${env.REPORT_TOKEN}`) {
+        return new Response('unauthorized', { status: 401 });
+      }
+      const days = Math.min(400, parseInt(url.searchParams.get('days') || '30', 10) || 30);
+      const from = new Date(Date.now() - days * 86400e3).toISOString().slice(0, 10);
+      const out = [];
+      let cursor;
+      do {
+        const page = await env.VIEWS.list({ prefix: 'ev:', cursor });
+        for (const k of page.keys) if (k.name.slice(3, 13) >= from && k.metadata) out.push(k.metadata);
+        cursor = page.list_complete ? null : page.cursor;
+      } while (cursor);
+      return Response.json({ from, events: out }, { headers: { 'cache-control': 'no-store' } });
+    }
+
     return env.ASSETS.fetch(request);
   }
 };
+
+const EVENTS = new Set(['form_submit', 'form_sent', 'popup_view', 'popup_lead', 'click_whatsapp',
+                        'click_call', 'click_email', 'click_phone', 'contact_open']);

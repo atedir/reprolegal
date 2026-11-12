@@ -209,6 +209,7 @@
     var track = function (action) {
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'contact_dock', contact_action: action });
+      if (action === 'open' && window.rlTrack) window.rlTrack('contact_open');
     };
     var icon = {
       chat: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" stroke-linejoin="round"/></svg>',
@@ -534,12 +535,57 @@
       return 'Link from another site · ' + h;
     };
 
+    // source / medium the way GA4 writes it, from the same visit facts
+    var sourceMedium = function () {
+      var src = params.get('utm_source'), med = params.get('utm_medium');
+      if (src) return src + ' / ' + (med || '(not set)');
+      if (params.get('gclid') || params.get('gbraid') || params.get('wbraid')) return 'google / cpc';
+      if (params.get('msclkid')) return 'bing / cpc';
+      if (params.get('fbclid')) return 'facebook / paid_social';
+      var h = host(visit.ref);
+      if (!h) return '(direct) / (none)';
+      var m = h.match(/(^|\.)(google|bing|duckduckgo|yahoo|yandex|ecosia|baidu)\./);
+      if (m) return m[2] + ' / organic';
+      if (/facebook|instagram|linkedin|t\.co$|twitter|x\.com|tiktok|reddit|youtube|pinterest|telegram|whatsapp/.test(h)) return h + ' / social';
+      if (/chatgpt|openai|perplexity|claude|gemini|copilot/.test(h)) return h + ' / ai';
+      return h + ' / referral';
+    };
+    var device = function () {
+      var w = window.innerWidth || 1024;
+      return w < 768 ? 'mobile' : w < 1100 && matchMedia('(pointer:coarse)').matches ? 'tablet' : 'desktop';
+    };
+
+    // a first-party event to our own Worker: what happened, where, in which language, and how
+    // this visit arrived. No cookie and no identifier, so it counts every visitor.
+    window.rlTrack = function (event) {
+      try {
+        var body = JSON.stringify({ e: event, sm: sourceMedium(), lp: visit.landing.split('?')[0], p: location.pathname,
+                                    l: document.documentElement.lang || 'en', d: device() });
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/e', new Blob([body], { type: 'application/json' }));
+        else fetch('/api/e', { method: 'POST', body: body, keepalive: true, headers: { 'content-type': 'application/json' } });
+      } catch (e) {}
+    };
+
+    // contact links, wherever they are on the page
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      var h = a.getAttribute('href');
+      if (/^tel:/.test(h)) rlTrack('click_phone');
+      else if (/^mailto:/.test(h)) rlTrack('click_email');
+      else if (/wa\.me\/|api\.whatsapp\.com/.test(h)) rlTrack('click_whatsapp');
+      else if (/cal\.com\/|calendly\.com\//.test(h)) rlTrack('click_call');
+    }, true);
+    // the home page form lands on /thank-you once Formspree has it
+    if (/^\/((ua|de|fr|es|it)\/)?thank-you(\.html)?\/?$/.test(location.pathname)) rlTrack('form_sent');
+
     window.rlAttribution = function () {
       var campaign = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']
         .filter(function (k) { return params.get(k); }).map(function (k) { return k.slice(4) + '=' + params.get(k); }).join(' · ');
       var click = CLICK_IDS.filter(function (k) { return params.get(k); }).map(function (k) { return k + '=' + params.get(k); }).join(' · ');
       return {
         came_from: cameFrom(),
+        source_medium: sourceMedium(),
         referrer: visit.ref || '(none)',
         landing_page: visit.landing,
         campaign: campaign || '(none)',
@@ -555,6 +601,11 @@
       var form = e.target;
       if (!form.action || form.action.indexOf('formspree.io') < 0 || form.classList.contains('rlp-form')) return;
       var a = window.rlAttribution();
+      rlTrack('form_submit');
+      // send the visitor to the thank-you page in their own language
+      var next = form.querySelector('input[name="_next"]');
+      var dir = (location.pathname.match(/^\/(ua|de|fr|es|it)(\/|$)/) || [])[1];
+      if (next && dir) next.value = location.origin + '/' + dir + '/thank-you';
       Object.keys(a).forEach(function (k) {
         var input = form.querySelector('input[name="' + k + '"]') || form.appendChild(document.createElement('input'));
         input.type = 'hidden'; input.name = k; input.value = a[k];
@@ -751,6 +802,7 @@
             markSeen();
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({ event: 'popup_lead', lead_source: 'popup-country-guide' });
+            if (window.rlTrack) window.rlTrack('popup_lead');
             form.outerHTML = '<div class="rlp-form rlp-done"><span class="rlp-tick">' + check + '</span>' +
                              '<b>' + t.okTitle + '</b><p>' + t.ok + '</p></div>';
             setTimeout(close, 4000);
@@ -765,6 +817,7 @@
 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'popup_view', lead_source: 'popup-country-guide' });
+      if (window.rlTrack) window.rlTrack('popup_view');
       requestAnimationFrame(function () { bg.classList.add('in'); });
     }
 
