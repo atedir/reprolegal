@@ -40,6 +40,25 @@ const show = (title, rows, n = 15) => {
 const leads = events.filter(e => LEADS.has(e.e));
 console.log(`First-party events · ${SITE} · since ${from} (${DAYS} days) · ${events.length} events, ${leads.length} leads and contact clicks`);
 show('By event', count(events, e => LABEL[e.e] || e.e));
+
+// one line per day: every lead and contact click, and how many times the popup was shown
+const days = new Map();
+for (const e of events) {
+  const d = e.t.slice(0, 10), row = days.get(d) || { leads: 0, form: 0, popup: 0, wa: 0, call: 0, mail: 0, shown: 0 };
+  if (LEADS.has(e.e)) row.leads++;
+  if (e.e === 'form_sent') row.form++;
+  if (e.e === 'popup_lead') row.popup++;
+  if (e.e === 'click_whatsapp') row.wa++;
+  if (e.e === 'click_call') row.call++;
+  if (e.e === 'click_email' || e.e === 'click_phone') row.mail++;
+  if (e.e === 'popup_view') row.shown++;
+  days.set(d, row);
+}
+console.log('\nBy day (UTC)      leads  form  popup  WhatsApp  booking  email/phone  popup shown');
+if (!days.size) console.log('  (nothing yet)');
+for (const [d, r] of [...days].sort()) {
+  console.log(`  ${d}       ${pad(r.leads, 7)}${pad(r.form, 6)}${pad(r.popup, 7)}${pad(r.wa, 10)}${pad(r.call, 9)}${pad(r.mail, 13)}${r.shown}`);
+}
 show('Leads and contact clicks by source / medium', count(leads, e => e.sm));
 show('… by source / medium and action', count(leads, e => `${pad(e.sm, 28)} ${LABEL[e.e]}`), 25);
 show('… by landing page (first page of the visit)', count(leads, e => e.lp));
