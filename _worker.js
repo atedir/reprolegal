@@ -55,7 +55,9 @@ export default {
     }
 
     if (url.pathname === '/api/events') {
-      if (!env.REPORT_TOKEN || request.headers.get('authorization') !== `Bearer ${env.REPORT_TOKEN}`) {
+      // trimmed: a token pasted into the dashboard easily carries a trailing newline
+      const token = String(env.REPORT_TOKEN || '').trim();
+      if (!token || (request.headers.get('authorization') || '').trim() !== `Bearer ${token}`) {
         return new Response('unauthorized', { status: 401 });
       }
       const days = Math.min(400, parseInt(url.searchParams.get('days') || '30', 10) || 30);
