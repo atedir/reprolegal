@@ -71,6 +71,8 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "content: new article"
+            # main may have moved while this ran (another push, another workflow): replay on top
+            git pull --rebase origin main
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
