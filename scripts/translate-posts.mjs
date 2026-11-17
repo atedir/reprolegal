@@ -51,6 +51,9 @@ Return exactly this format, nothing before or after, no markdown fences:
 const TAGS = ['a', 'p', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'strong', 'em', 'div', 'table', 'tr'];
 const shape = html => TAGS.map(tag => (html.match(new RegExp('<' + tag + '[\\s>]', 'g')) || []).length).join(',');
 const hrefs = html => [...html.matchAll(/href="([^"]*)"/g)].map(m => m[1]).join(' ');
+// every tag that was opened is closed again (a dropped </p> breaks the whole page)
+const unbalanced = html => TAGS.filter(tag =>
+  (html.match(new RegExp('<' + tag + '[\\s>]', 'g')) || []).length !== (html.match(new RegExp('</' + tag + '>', 'g')) || []).length);
 
 async function translate(src, l) {
   if (DRY) return { title: `[${l.code}] ${src.title}`, description: src.description, lede: src.lede, body: src.body };
@@ -65,6 +68,8 @@ async function translate(src, l) {
     // a translation that lost or invented markup would break the page; ask once more, then give up
     if (shape(out.body) !== shape(src.body)) { lastError = `markup changed (${shape(src.body)} → ${shape(out.body)})`; continue; }
     if (hrefs(out.body) !== hrefs(src.body)) { lastError = 'links changed'; continue; }
+    const open = unbalanced(out.body);
+    if (open.length) { lastError = 'unclosed tags: ' + open.join(', '); continue; }
     out.title = out.title.replace(/\s+/g, ' ');
     out.description = out.description.replace(/\s+/g, ' ');
     return out;
