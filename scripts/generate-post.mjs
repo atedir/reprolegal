@@ -41,6 +41,26 @@ the article body as HTML using only h2, h3, p, ul, ol, li, blockquote and a tags
 900-1400 words. Include 2-3 internal links chosen from /countries /costs /how-it-works /programmes /faq.
 <<<END>>>`;
 
+// Words that say what an article is actually about, for spotting a second article on a
+// topic already covered ("Surrogacy in Mexico: laws…" vs "Surrogacy in Mexico: legal status…").
+const TOPIC_STOP = new Set(('surrogacy surrogate intended parents parent guide what which when where your their about '
+  + 'with from into after before over explained practical overview steps step considerations comparisons key '
+  + 'legal laws law status costs cost typical things know need should how does more 2026').split(' '));
+const topicWords = s => new Set((String(s).toLowerCase().match(/[a-z]{4,}/g) || []).filter(w => !TOPIC_STOP.has(w)));
+
+/** The existing article whose subject this topic repeats, or null. */
+function repeats(topic, titles) {
+  const mine = topicWords(topic);
+  if (!mine.size) return null;
+  for (const t of titles) {
+    const theirs = topicWords(t);
+    const shared = [...mine].filter(w => theirs.has(w)).length;
+    // every subject word already in one title (same country, same angle), or most of them
+    if (shared && (shared === mine.size || shared / Math.min(mine.size, theirs.size) >= 0.75)) return t;
+  }
+  return null;
+}
+
 async function nextTopic() {
   let raw = '';
   try { raw = await fs.readFile(TOPICS, 'utf8'); } catch {}
@@ -50,17 +70,35 @@ async function nextTopic() {
     await fs.writeFile(TOPICS, lines.join('\n') + (lines.length ? '\n' : ''));
     return topic;
   }
-  const existing = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => [])).join(', ');
+  const files = (await fs.readdir(path.join(ROOT, 'blog')).catch(() => [])).filter(f => f.endsWith('.html'));
+  const titles = [];
+  for (const f of files) {
+    const t = ((await fs.readFile(path.join(ROOT, 'blog', f), 'utf8')).match(/<title>(.*?)\s*\|/s) || [])[1];
+    if (t) titles.push(t.trim());
+  }
+  const existing = titles.map(t => `- ${t}`).join('\n');
+  // ask, and ask again (naming the clash) while the answer repeats an article we already have
+  const fresh = async (ask) => {
+    let note = '';
+    for (let i = 0; i < 3; i++) {
+      const topic = ((await ask(note)).split('\n').map(s => s.trim()).filter(Boolean)[0] || '');
+      if (topic.length < 15) return '';
+      const clash = repeats(topic, titles);
+      if (!clash) return topic;
+      console.log(`Topic "${topic}" repeats "${clash}", asking again`);
+      note = `\n\nDo NOT propose "${topic}": it repeats the existing article "${clash}". Choose a different subject.`;
+    }
+    return '';
+  };
 
   // Real demand first: queries Google already shows us for but where we rank poorly.
   try {
     const opp = opportunities(await fetchQueries({ siteUrl: 'reprolegal.com', days: 90 }));
     if (opp.length) {
       const demand = opp.map(r => `- "${r.query}" — ${r.impressions} impressions, ${r.clicks} clicks, position ${r.position.toFixed(1)}`).join('\n');
-      const pick = await claude(`You plan articles for ReproLegal, an agency coordinating surrogacy and IVF programmes for intended parents. These are real Google Search Console queries the site already appears for but ranks poorly on. Pick the most valuable cluster of related queries a practical article could answer head-on, and return ONE topic line for it: no quotes, no full stop, under 14 words, in English even if the queries are not. It must not duplicate an existing article. Ignore queries that are another company's name. Answer with the topic only.`,
-        `Queries:\n${demand}\n\nExisting articles: ${existing}`, 600);
-      const topic = pick.split('\n').map(s => s.trim()).filter(Boolean)[0] || '';
-      if (topic.length >= 15) { console.log('Topic from Search Console demand'); return topic; }
+      const topic = await fresh(note => claude(`You plan articles for ReproLegal, an agency coordinating surrogacy and IVF programmes for intended parents. These are real Google Search Console queries the site already appears for but ranks poorly on. Pick the most valuable cluster of related queries a practical article could answer head-on, and return ONE topic line for it: no quotes, no full stop, under 14 words, in English even if the queries are not. It must not cover a subject an existing article already covers head-on — a second article on the same country or the same question splits the traffic between them; prefer a new angle or a different cluster. Ignore queries that are another company's name. Answer with the topic only.`,
+        `Queries:\n${demand}\n\nExisting articles:\n${existing}${note}`, 600));
+      if (topic) { console.log('Topic from Search Console demand'); return topic; }
     } else console.log('GSC: no usable queries yet');
   } catch (e) {
     console.error('GSC lookup failed, continuing without it:', e.message);
@@ -73,13 +111,9 @@ async function nextTopic() {
   // gets an empty string with no error anywhere in the logs.
   const topicSystem = `You suggest article topics for ReproLegal, an agency coordinating surrogacy and IVF programmes for intended parents. Topics must be practical and specific: law by country, what programmes cost, how to verify an agency, documents and recognition at home. No hype. Answer with the topic only, on one line, no quotes and no full stop.`;
 
-  const proposed = await claude(topicSystem,
-    `Propose ONE new article topic that is not already covered. Existing articles: ${existing}`, 600);
-
-  const topic = proposed.split('\n').map(s => s.trim()).filter(Boolean)[0] || '';
-  if (!topic || topic.length < 15) {
-    throw new Error('The model returned no usable topic: ' + JSON.stringify(proposed.slice(0, 200)));
-  }
+  const topic = await fresh(note => claude(topicSystem,
+    `Propose ONE new article topic that is not already covered.\n\nExisting articles:\n${existing}${note}`, 600));
+  if (!topic) throw new Error('The model returned no usable topic that is not already covered');
   return topic;
 }
 

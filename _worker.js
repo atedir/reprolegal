@@ -72,8 +72,19 @@ export default {
       return Response.json({ from, events: out }, { headers: { 'cache-control': 'no-store' } });
     }
 
+    // ---- merged articles: the old address points at the article it was folded into ----
+    const merged = url.pathname.match(/^(\/(?:ua|de|fr|es|it))?\/blog\/([a-z0-9-]+?)(?:\.html)?\/?$/);
+    if (merged && MERGED[merged[2]]) {
+      return Response.redirect(`${url.origin}${merged[1] || ''}/blog/${MERGED[merged[2]]}`, 301);
+    }
+
     return env.ASSETS.fetch(request);
   }
+};
+
+// old slug -> the article that now holds its content, in every language
+const MERGED = {
+  'surrogacy-in-mexico-laws-costs-and-key-comparisons': 'surrogacy-in-mexico-legal-status-costs-and-key-considerations',
 };
 
 const EVENTS = new Set(['form_submit', 'form_sent', 'popup_view', 'popup_lead', 'click_whatsapp',
